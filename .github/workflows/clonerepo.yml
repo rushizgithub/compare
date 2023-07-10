@@ -27,6 +27,6 @@ jobs:
          git config user.name "Your Name"
          git config user.email "your.email@example.com"
          git status
-         git add nullgram
+         git add --all nullgram/*
          git commit -m "Compare repositories"
          git push
