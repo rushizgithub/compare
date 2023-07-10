@@ -46,6 +46,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import top.qwq2333.nullgram.utils.StringUtils;
+
 public class ContactsController extends BaseController {
 
     private Account systemAccount;
@@ -2895,7 +2897,7 @@ public class ContactsController extends BaseController {
                 result.append(firstName);
             }
         }
-        return result.toString();
+        return StringUtils.zalgoFilter(result.toString());
     }
 
     private class PhoneBookContact {

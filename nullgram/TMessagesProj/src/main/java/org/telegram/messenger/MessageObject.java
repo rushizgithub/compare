@@ -79,6 +79,7 @@ import java.util.regex.Pattern;
 import top.qwq2333.nullgram.config.ConfigManager;
 import top.qwq2333.nullgram.ui.syntaxhighlight.SyntaxHighlight;
 import top.qwq2333.nullgram.utils.Defines;
+import top.qwq2333.nullgram.utils.StringUtils;
 
 public class MessageObject {
 
@@ -3965,6 +3966,8 @@ public class MessageObject {
 
         if (messageText == null) {
             messageText = "";
+        } else {
+            messageText = StringUtils.zalgoFilter(messageText);
         }
     }
 

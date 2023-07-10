@@ -40,6 +40,10 @@ import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.ShadowSectionCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 
+import top.qwq2333.nullgram.config.ConfigManager;
+import top.qwq2333.nullgram.utils.Defines;
+import top.qwq2333.nullgram.utils.Log;
+
 public class ClearHistoryAlert extends BottomSheet {
 
     private Drawable shadowDrawable;
@@ -238,7 +242,7 @@ public class ClearHistoryAlert extends BottomSheet {
             revokeTimeLimit = MessagesController.getInstance(currentAccount).revokeTimeLimit;
         }
         boolean canDeleteInbox = user != null && canRevokeInbox && revokeTimeLimit == 0x7fffffff;
-        final boolean[] deleteForAll = new boolean[]{false};
+        final boolean[] deleteForAll = ConfigManager.getBooleanOrFalse(Defines.deleteMessageForBoth) ? new boolean[]{true} : new boolean[]{false};
         boolean deleteChatForAll = false;
 
         if (!autoDeleteOnly) {
@@ -273,7 +277,7 @@ public class ClearHistoryAlert extends BottomSheet {
             if (canDeleteInbox && !UserObject.isDeleted(user)) {
                 cell = new CheckBoxCell(context, 1, resourcesProvider);
                 cell.setBackgroundDrawable(Theme.getSelectorDrawable(false));
-                cell.setText(LocaleController.formatString("ClearHistoryOptionAlso", R.string.ClearHistoryOptionAlso, UserObject.getFirstName(user)), "", false, false);
+                cell.setText(LocaleController.formatString("ClearHistoryOptionAlso", R.string.ClearHistoryOptionAlso, UserObject.getFirstName(user)), "", deleteForAll[0], false);
                 cell.setPadding(LocaleController.isRTL ? AndroidUtilities.dp(16) : AndroidUtilities.dp(5), 0, LocaleController.isRTL ? AndroidUtilities.dp(5) : AndroidUtilities.dp(16), 0);
                 linearLayout.addView(cell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
                 cell.setOnClickListener(v -> {

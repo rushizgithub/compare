@@ -809,6 +809,11 @@ public class NotificationsController extends BaseController {
                         MessageObject.isTopicActionMessage(messageObject)) {
                     continue;
                 }
+
+                if (ConfigManager.getBooleanOrFalse(Defines.ignoreBlockedUser) && getMessagesController().blockePeers.indexOfKey(messageObject.getSenderId()) >= 0) {
+                    continue;
+                }
+
                 int mid = messageObject.getId();
                 long randomId = messageObject.isFcmMessage() ? messageObject.messageOwner.random_id : 0;
                 long dialogId = messageObject.getDialogId();
@@ -3054,14 +3059,16 @@ public class NotificationsController extends BaseController {
             } else {
                 icon = IconCompat.createWithResource(ApplicationLoader.applicationContext, R.drawable.book_group);
             }
-            NotificationCompat.BubbleMetadata.Builder bubbleBuilder =
-                    new NotificationCompat.BubbleMetadata.Builder(
-                            PendingIntent.getActivity(ApplicationLoader.applicationContext, 0, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT),
-                            icon);
-            bubbleBuilder.setSuppressNotification(openedDialogId == did);
-            bubbleBuilder.setAutoExpandBubble(false);
-            bubbleBuilder.setDesiredHeight(AndroidUtilities.dp(640));
-            builder.setBubbleMetadata(bubbleBuilder.build());
+            if (!ConfigManager.getBooleanOrFalse(Defines.disableNotificationBubble)) {
+                NotificationCompat.BubbleMetadata.Builder bubbleBuilder =
+                        new NotificationCompat.BubbleMetadata.Builder(
+                                PendingIntent.getActivity(ApplicationLoader.applicationContext, 0, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT),
+                                icon);
+                bubbleBuilder.setSuppressNotification(openedDialogId == did);
+                bubbleBuilder.setAutoExpandBubble(false);
+                bubbleBuilder.setDesiredHeight(AndroidUtilities.dp(640));
+                builder.setBubbleMetadata(bubbleBuilder.build());
+            }
             return id;
         } catch (Exception e) {
             FileLog.e(e);
@@ -4036,13 +4043,6 @@ public class NotificationsController extends BaseController {
             notificationBuilder.setChannelId(validateChannelId(lastDialogId, lastTopicId, chatName, vibrationPattern, ledColor, sound, importance, isDefault, isInApp, isSilent, chatType));
         }
         Notification mainNotification = notificationBuilder.build();
-        if (Build.VERSION.SDK_INT < 18) {
-            notificationManager.notify(notificationId, mainNotification);
-            if (BuildVars.LOGS_ENABLED) {
-                FileLog.d("show summary notification by SDK check");
-            }
-            return;
-        }
 
         SharedPreferences preferences = getAccountInstance().getNotificationsSettings();
 
@@ -4346,6 +4346,11 @@ public class NotificationsController extends BaseController {
                 if (topicId != messageTopicId) {
                     continue;
                 }
+
+                if (ConfigManager.getBooleanOrFalse(Defines.ignoreBlockedUser) && getMessagesController().blockePeers.indexOfKey(messageObject.getSenderId()) >= 0) {
+                    continue;
+                }
+
                 String message = getShortStringForMessage(messageObject, senderName, preview);
                 if (dialogId == selfUserId) {
                     senderName[0] = name;

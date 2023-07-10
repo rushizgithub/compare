@@ -2260,6 +2260,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     public boolean onFragmentCreate() {
         super.onFragmentCreate();
 
+        getMessagesController().getBlockedPeers(true);
+
         if (arguments != null) {
             onlySelect = arguments.getBoolean("onlySelect", false);
             canSelectTopics = arguments.getBoolean("canSelectTopics", false);
@@ -2757,9 +2759,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, AndroidUtilities.dp(26));
                 statusDrawable.center = true;
                 if (BuildVars.DEBUG_VERSION) {
-                    actionBar.setTitle(LocaleController.getString("AppNameBeta", R.string.AppNameBeta), statusDrawable);
+                    actionBar.setTitle(ConfigManager.getStringOrDefault(Defines.customTitle, LocaleController.getString("AppNameBeta", R.string.AppNameBeta)), statusDrawable);
                 } else {
-                    actionBar.setTitle(LocaleController.getString("AppName", R.string.AppName), statusDrawable);
+                    actionBar.setTitle(ConfigManager.getStringOrDefault(Defines.customTitle, LocaleController.getString("AppName", R.string.AppName)), statusDrawable);
                 }
                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
             }
@@ -2921,6 +2923,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 @Override
                 public int getTabCounter(int tabId) {
                     if (initialDialogsType == DIALOGS_TYPE_FORWARD) {
+                        return 0;
+                    }
+                    if (ConfigManager.getBooleanOrFalse(Defines.ignoreFolderUnreadCount)) {
                         return 0;
                     }
                     if (tabId == filterTabsView.getDefaultTabId()) {
@@ -4526,8 +4531,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         contentView.addView(rightSlidingDialogContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
         PrivacyUtils.postCheckAll(getParentActivity(), currentAccount);
-        if (new Random().nextInt(100) < 50)
-            UpdateUtils.postCheckFollowChannel(getParentActivity(), currentAccount);
+//        if (new Random().nextInt(100) < 50)
+//            UpdateUtils.postCheckFollowChannel(getParentActivity(), currentAccount);
 
         return fragmentView;
     }

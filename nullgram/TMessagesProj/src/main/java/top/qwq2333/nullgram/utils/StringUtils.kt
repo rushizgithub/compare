@@ -20,6 +20,7 @@ package top.qwq2333.nullgram.utils
 
 import org.telegram.tgnet.TLRPC
 import ws.vinta.pangu.Pangu
+import top.qwq2333.nullgram.config.ConfigManager.getBooleanOrFalse
 
 object StringUtils {
     private val pangu = Pangu()
@@ -116,7 +117,7 @@ object StringUtils {
                     list.add(text[i])
                 }
             }
-            var (start, targetLength) = 0 to 0
+            var (start, targetLength) = it.offset to 0
             var isFinished = false
             for (i in it.offset until panguText.length) {
                 if (i < start) continue
@@ -131,8 +132,8 @@ object StringUtils {
                             break
                         }
                     } else {
-                        if (text[j] == panguText[j]) continue
-                        if (panguText[j+1] != char[0] && start != 0) continue
+                        if (text.length >= j && text[j] == panguText[j]) continue
+                        if (panguText[j + 1] != char[0] && start != 0) continue
                         panguEntities.add(Utils.generateMessageEntity(it, start, targetLength))
                         start = j + 1
                         targetLength = 0
@@ -142,5 +143,21 @@ object StringUtils {
             }
         }
         return Pair(panguText, panguEntities)
+    }
+
+    @JvmStatic
+    fun zalgoFilter(text: String?): String {
+        return if (text == null) {
+            ""
+        } else if (getBooleanOrFalse(Defines.filterZalgo) && text.matches(".*\\p{Mn}{4}.*".toRegex())) {
+            text.replace("(?i)([aeiouy]̈)|[̀-ͯ҉]".toRegex(), "").replace("\\p{Mn}".toRegex(), "")
+        } else {
+            text
+        }
+    }
+
+    @JvmStatic
+    fun zalgoFilter(text: CharSequence?): String {
+        return zalgoFilter(text.toString())
     }
 }

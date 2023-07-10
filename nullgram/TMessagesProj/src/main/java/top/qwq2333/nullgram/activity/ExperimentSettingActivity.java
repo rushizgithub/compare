@@ -56,6 +56,7 @@ public class ExperimentSettingActivity extends BaseActivity {
     private int blockSponsorAdsRow;
     private int hideProxySponsorChannelRow;
     private int disableSendTypingRow;
+    private int keepOnlineStatusAsRow;
     private int syntaxHighlightRow;
     private int aliasChannelRow;
     private int keepFormattingRow;
@@ -63,6 +64,9 @@ public class ExperimentSettingActivity extends BaseActivity {
     private int linkedUserRow;
     private int overrideChannelAliasRow;
     private int showRPCErrorRow;
+
+    private int specialRow;
+    private int special2Row;
 
     private int panguRow;
     private int enablePanguOnSendingRow;
@@ -74,6 +78,7 @@ public class ExperimentSettingActivity extends BaseActivity {
     private int hidePremiumStickerAnimRow;
     private int fastSpeedUploadRow;
     private int modifyDownloadSpeedRow;
+    private int ignoreChatStrictRow;
     private int premium2Row;
     private int alwaysSendWithoutSoundRow;
 
@@ -182,6 +187,16 @@ public class ExperimentSettingActivity extends BaseActivity {
                     ConfigManager.putInt(Defines.modifyDownloadSpeed, speeds[i]);
                     listAdapter.notifyItemChanged(modifyDownloadSpeedRow, PARTIAL);
                 });
+        } else if (position == keepOnlineStatusAsRow) {
+            ArrayList<String> str = new ArrayList<>();
+            str.add(LocaleController.getString("Default", R.string.Default));
+            str.add(LocaleController.getString("Online", R.string.Online));
+            str.add(LocaleController.getString("Offline", R.string.Offline));
+            PopupBuilder.show(str, LocaleController.getString("keepOnlineStatusAsRow", R.string.keepOnlineStatusAs),
+                ConfigManager.getIntOrDefault(Defines.keepOnlineStatusAs, 0), getParentActivity(), view, i -> {
+                    ConfigManager.putInt(Defines.keepOnlineStatusAs, i);
+                    listAdapter.notifyItemChanged(keepOnlineStatusAsRow, PARTIAL);
+                });
         } else if (position == alwaysSendWithoutSoundRow) {
             ConfigManager.toggleBoolean(Defines.alwaysSendWithoutSound);
             if (view instanceof TextCheckCell) {
@@ -201,6 +216,11 @@ public class ExperimentSettingActivity extends BaseActivity {
             ConfigManager.toggleBoolean(Defines.enablePanguOnReceiving);
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.enablePanguOnReceiving));
+            }
+        } else if (position == ignoreChatStrictRow) {
+            ConfigManager.toggleBoolean(Defines.ignoreChatStrict);
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.ignoreChatStrict));
             }
         }
 
@@ -222,11 +242,6 @@ public class ExperimentSettingActivity extends BaseActivity {
         super.updateRows();
 
         experimentRow = addRow();
-        if (ConfigManager.getBooleanOrFalse(Defines.showHiddenSettings)) {
-            blockSponsorAdsRow = addRow("blockSponsorAds");
-            hideProxySponsorChannelRow = addRow("hideProxySponsorChannel");
-            disableSendTypingRow = addRow("disableSendTyping");
-        }
         disableFilteringRow = sensitiveCanChange ? addRow("disableFiltering") : -1;
         syntaxHighlightRow = addRow("syntaxHighlight");
         aliasChannelRow = addRow("aliasChannel");
@@ -243,6 +258,15 @@ public class ExperimentSettingActivity extends BaseActivity {
         showRPCErrorRow = user != null && user.developer() ? addRow("showRPCError") : -1;
         experiment2Row = addRow();
 
+        if (ConfigManager.getBooleanOrFalse(Defines.showHiddenSettings)) {
+            specialRow = addRow();
+            blockSponsorAdsRow = addRow("blockSponsorAds");
+            hideProxySponsorChannelRow = addRow("hideProxySponsorChannel");
+            disableSendTypingRow = addRow("disableSendTyping");
+            keepOnlineStatusAsRow = addRow("keepOnlineStatusAs");
+            special2Row = addRow();
+        }
+
         panguRow = addRow();
         enablePanguOnSendingRow = addRow("enablePanguOnSending");
         enablePanguOnReceivingRow = /*addRow("enablePanguOnReceiving")*/ -1; //todo: not finished
@@ -255,6 +279,7 @@ public class ExperimentSettingActivity extends BaseActivity {
             fastSpeedUploadRow = addRow("fastSpeedUpload");
             modifyDownloadSpeedRow = addRow("modifyDownloadSpeed");
             premium2Row = addRow();
+            ignoreChatStrictRow = addRow("ignoreChatStrict");
         }
 
         if (listAdapter != null) {
@@ -301,6 +326,23 @@ public class ExperimentSettingActivity extends BaseActivity {
                     if (position == modifyDownloadSpeedRow) {
                         textCell.setTextAndValue(LocaleController.getString("modifyDownloadSpeed", R.string.modifyDownloadSpeed),
                             ConfigManager.getIntOrDefault(Defines.modifyDownloadSpeed, 128) + " Kb/block", payload, false);
+                    } else if (position == keepOnlineStatusAsRow) {
+                        String value;
+                        switch (ConfigManager.getIntOrDefault(Defines.keepOnlineStatusAs, 0)) {
+                            case 0:
+                                value = LocaleController.getString("Default", R.string.Default);
+                                break;
+                            case 1:
+                                value = LocaleController.getString("Online", R.string.Online);
+                                break;
+                            case 2:
+                                value = LocaleController.getString("Offline", R.string.Offline);
+                                break;
+                            default:
+                                throw new IllegalStateException("Unexpected value: " + ConfigManager.getIntOrDefault(Defines.keepOnlineStatusAs, 0));
+                        }
+                        textCell.setTextAndValue(LocaleController.getString("keepOnlineStatusAs", R.string.keepOnlineStatusAs),
+                            value, payload, false);
                     }
                     break;
                 }
@@ -356,10 +398,11 @@ public class ExperimentSettingActivity extends BaseActivity {
                     } else if (position == showRPCErrorRow) {
                         textCell.setTextAndCheck(LocaleController.getString("showRPCError", R.string.showRPCError), ConfigManager.getBooleanOrFalse(Defines.showRPCError), true);
                     } else if (position == enablePanguOnSendingRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("enablePanguOnSending", R.string.enablePanguOnSending), ConfigManager.getBooleanOrFalse(Defines.enablePanguOnSending),
-                            true);
+                        textCell.setTextAndCheck(LocaleController.getString("enablePanguOnSending", R.string.enablePanguOnSending), ConfigManager.getBooleanOrFalse(Defines.enablePanguOnSending), true);
                     } else if (position == enablePanguOnReceivingRow) {
                         textCell.setTextAndCheck(LocaleController.getString("enablePanguOnReceiving", R.string.enablePanguOnReceiving), ConfigManager.getBooleanOrFalse(Defines.enablePanguOnReceiving), true);
+                    } else if (position == ignoreChatStrictRow) {
+                        textCell.setTextAndCheck("", ConfigManager.getBooleanOrFalse(Defines.ignoreChatStrict), true);
                     }
                     break;
                 }
@@ -371,6 +414,8 @@ public class ExperimentSettingActivity extends BaseActivity {
                         headerCell.setText(LocaleController.getString("Premium", R.string.premium));
                     } else if (position == panguRow) {
                         headerCell.setText(LocaleController.getString("pangu", R.string.pangu));
+                    } else if (position == specialRow) {
+                        headerCell.setText(LocaleController.getString("Special", R.string.Special));
                     }
                     break;
                 }
@@ -392,11 +437,11 @@ public class ExperimentSettingActivity extends BaseActivity {
 
         @Override
         public int getItemViewType(int position) {
-            if (position == experiment2Row || position == premium2Row || position == pangu2Row) {
+            if (position == experiment2Row || position == premium2Row || position == pangu2Row || position == special2Row) {
                 return TYPE_SHADOW;
-            } else if (position == modifyDownloadSpeedRow) {
+            } else if (position == modifyDownloadSpeedRow || position == keepOnlineStatusAsRow) {
                 return TYPE_SETTINGS;
-            } else if (position == experimentRow || position == premiumRow || position == panguRow) {
+            } else if (position == experimentRow || position == premiumRow || position == panguRow || position == specialRow) {
                 return TYPE_HEADER;
             } else if (position == pangu3Row) {
                 return TYPE_INFO_PRIVACY;

@@ -49,6 +49,8 @@ import org.telegram.ui.NotificationsSettingsActivity;
 
 import java.util.Locale;
 
+import top.qwq2333.nullgram.utils.StringUtils;
+
 public class ProfileSearchCell extends BaseCell implements NotificationCenter.NotificationCenterDelegate {
 
     private CharSequence currentName;
@@ -638,6 +640,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
                 } else {
                     newName = chat.title;
                 }
+                newName = StringUtils.zalgoFilter(newName);
                 if (!newName.equals(lastName)) {
                     continueUpdate = true;
                 }
@@ -664,7 +667,8 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
         } else if (chat != null) {
             lastName = chat.title;
         }
-
+        
+        lastName = StringUtils.zalgoFilter(lastName);
         lastAvatar = photo;
 
         if (getMeasuredWidth() != 0 || getMeasuredHeight() != 0) {

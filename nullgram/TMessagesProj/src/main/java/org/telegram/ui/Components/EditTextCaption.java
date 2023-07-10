@@ -53,6 +53,7 @@ import org.telegram.ui.ActionBar.Theme;
 
 import java.util.List;
 
+import top.qwq2333.nullgram.ui.sortList.items.TextStyleItems;
 import top.qwq2333.nullgram.ui.syntaxhighlight.SyntaxHighlight;
 
 public class EditTextCaption extends EditTextBoldCursor {
@@ -704,15 +705,10 @@ public class EditTextCaption extends EditTextBoldCursor {
             }
         }
         if (hasSelection()) {
-            infoCompat.addAction(new AccessibilityNodeInfoCompat.AccessibilityActionCompat(R.id.menu_spoiler, LocaleController.getString("Spoiler", R.string.Spoiler)));
-            infoCompat.addAction(new AccessibilityNodeInfoCompat.AccessibilityActionCompat(R.id.menu_bold, LocaleController.getString("Bold", R.string.Bold)));
-            infoCompat.addAction(new AccessibilityNodeInfoCompat.AccessibilityActionCompat(R.id.menu_italic, LocaleController.getString("Italic", R.string.Italic)));
-            infoCompat.addAction(new AccessibilityNodeInfoCompat.AccessibilityActionCompat(R.id.menu_mono, LocaleController.getString("Mono", R.string.Mono)));
-            infoCompat.addAction(new AccessibilityNodeInfoCompat.AccessibilityActionCompat(R.id.menu_strike, LocaleController.getString("Strike", R.string.Strike)));
-            infoCompat.addAction(new AccessibilityNodeInfoCompat.AccessibilityActionCompat(R.id.menu_underline, LocaleController.getString("Underline", R.string.Underline)));
-            infoCompat.addAction(new AccessibilityNodeInfoCompat.AccessibilityActionCompat(R.id.menu_mention, LocaleController.getString("CreateMention", R.string.CreateMention)));
-            infoCompat.addAction(new AccessibilityNodeInfoCompat.AccessibilityActionCompat(R.id.menu_link, LocaleController.getString("CreateLink", R.string.CreateLink)));
-            infoCompat.addAction(new AccessibilityNodeInfoCompat.AccessibilityActionCompat(R.id.menu_regular, LocaleController.getString("Regular", R.string.Regular)));
+            List<Integer> enabledOrder = TextStyleItems.INSTANCE.getEnabledOrder();
+            for (int i : enabledOrder) {
+                infoCompat.addAction(new AccessibilityNodeInfoCompat.AccessibilityActionCompat(TextStyleItems.INSTANCE.getItemIds()[i], TextStyleItems.INSTANCE.getItemNames()[i]));
+            }
         }
     }
 

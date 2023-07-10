@@ -1999,7 +1999,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity(), resourcesProvider);
                             builder.setTitle(LocaleController.getString("AddBot", R.string.AddBot));
-                            String chatName = chat == null ? "" : chat.title;
+                            String chatName = chat == null ? "" : StringUtils.zalgoFilter(chat.title);
                             builder.setMessage(AndroidUtilities.replaceTags(LocaleController.formatString("AddMembersAlertNamesText", R.string.AddMembersAlertNamesText, UserObject.getUserName(user), chatName)));
                             builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
                             builder.setPositiveButton(LocaleController.getString("AddBot", R.string.AddBot), (di, i) -> {
@@ -8105,7 +8105,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         title = Emoji.replaceEmoji(title, nameTextView[a].getPaint().getFontMetricsInt(), AndroidUtilities.dp(24), false);
                     } catch (Exception ignore) {
                     }
-                    if (nameTextView[a].setText(title)) {
+                    if (nameTextView[a].setText(StringUtils.zalgoFilter(title))) {
                         changed = true;
                     }
                 } else if (chat.title != null) {
@@ -8114,7 +8114,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         title = Emoji.replaceEmoji(title, nameTextView[a].getPaint().getFontMetricsInt(), AndroidUtilities.dp(24), false);
                     } catch (Exception ignore) {
                     }
-                    if (nameTextView[a].setText(title)) {
+                    if (nameTextView[a].setText(StringUtils.zalgoFilter(title))) {
                         changed = true;
                     }
                 }
@@ -8361,6 +8361,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     if (chatInfo == null || !chatInfo.participants_hidden || ChatObject.hasAdminRights(chat)) {
                         canSearchMembers = true;
                         otherItem.addSubItem(search_members, R.drawable.msg_search, LocaleController.getString("SearchMembers", R.string.SearchMembers));
+                        otherItem.addSubItem(event_log, R.drawable.msg_log, LocaleController.getString("EventLog", R.string.EventLog));
                     }
                     if (!chat.creator && !chat.left && !chat.kicked && !isTopic) {
                         otherItem.addSubItem(leave_group, R.drawable.msg_leave, LocaleController.getString("LeaveMegaMenu", R.string.LeaveMegaMenu));
@@ -9289,7 +9290,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         PackageInfo pInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
                         int code = pInfo.versionCode;
                         String abi = BuildConfig.FLAVOR;
-                        cell.setText(LocaleController.formatString("NullgramVersion", R.string.NullgramVersion, String.format(Locale.US, "%s (%d) %s", pInfo.versionName, code, abi), String.format(Locale.US, "%s (%d)", BuildVars.BUILD_VERSION_STRING, BuildVars.BUILD_VERSION)));
+                        cell.setText(LocaleController.formatString("NnngramVersion", R.string.NullgramVersion, String.format(Locale.US, "%s (%d) %s", pInfo.versionName, code, abi),
+                            String.format(Locale.US, "%s (%d)", BuildVars.BUILD_VERSION_STRING, BuildVars.BUILD_VERSION)));
                     } catch (Exception e) {
                         FileLog.e(e);
                     }
@@ -9484,10 +9486,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     } else if (position == numberRow) {
                         TLRPC.User user = UserConfig.getInstance(currentAccount).getCurrentUser();
                         String value;
-                        if (user != null && user.phone != null && user.phone.length() != 0) {
-                            value = PhoneFormat.getInstance().format("+" + user.phone);
+                        if (!ConfigManager.getBooleanOrFalse(Defines.hideProfilePhone)) {
+                            if (user != null && user.phone != null && user.phone.length() != 0) {
+                                value = PhoneFormat.getInstance().format("+" + user.phone);
+                            } else {
+                                value = LocaleController.getString("NumberUnknown", R.string.NumberUnknown);
+                            }
+                        } else if (!TextUtils.isEmpty(user.username)) {
+                            value = "@" + user.username;
                         } else {
-                            value = LocaleController.getString("NumberUnknown", R.string.NumberUnknown);
+                            value = "@???";
                         }
                         detailCell.setTextAndValue(value, LocaleController.getString("TapToChangePhone", R.string.TapToChangePhone), true);
                         detailCell.setContentDescriptionValueFirst(false);
@@ -9540,18 +9548,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     if (position == userInfoRow) {
                         TLRPC.User user = userInfo.user != null ? userInfo.user : getMessagesController().getUser(userInfo.id);
                         boolean addlinks = isBot || (user != null && user.premium && userInfo.about != null);
-                        aboutLinkCell.setTextAndValue(userInfo.about, LocaleController.getString("UserBio", R.string.UserBio), addlinks);
+                        aboutLinkCell.setTextAndValue(StringUtils.zalgoFilter(userInfo.about), LocaleController.getString("UserBio", R.string.UserBio), addlinks);
                     } else if (position == channelInfoRow) {
                         String text = chatInfo.about;
                         while (text.contains("\n\n\n")) {
                             text = text.replace("\n\n\n", "\n\n");
                         }
-                        aboutLinkCell.setText(text, true);
+                        aboutLinkCell.setText(StringUtils.zalgoFilter(text), true);
                     } else if (position == bioRow) {
                         String value;
                         if (userInfo == null || !TextUtils.isEmpty(userInfo.about)) {
                             value = userInfo == null ? LocaleController.getString("Loading", R.string.Loading) : userInfo.about;
-                            aboutLinkCell.setTextAndValue(value, LocaleController.getString("UserBio", R.string.UserBio), getUserConfig().isPremium());
+                            aboutLinkCell.setTextAndValue(StringUtils.zalgoFilter(value), LocaleController.getString("UserBio", R.string.UserBio), getUserConfig().isPremium());
                             currentBio = userInfo != null ? userInfo.about : null;
                         } else {
                             aboutLinkCell.setTextAndValue(LocaleController.getString("UserBio", R.string.UserBio), LocaleController.getString("UserBioDetail", R.string.UserBioDetail), false);
@@ -9641,7 +9649,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         textCell.setText(LocaleController.getString("ReportUserLocation", R.string.ReportUserLocation), false);
                         textCell.setColors(-1, Theme.key_text_RedRegular);
                     } else if (position == nullRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("NullSettings", R.string.NullSettings), R.drawable.msg_settings, false);
+                        textCell.setTextAndIcon(LocaleController.getString("NnnSettings", R.string.NullgramName), R.drawable.msg_settings, false);
                     } else if (position == languageRow) {
                         textCell.setTextAndValueAndIcon(LocaleController.getString("Language", R.string.Language), LocaleController.getCurrentLanguageName(), false, R.drawable.msg2_language, false);
                         textCell.setImageLeft(23);

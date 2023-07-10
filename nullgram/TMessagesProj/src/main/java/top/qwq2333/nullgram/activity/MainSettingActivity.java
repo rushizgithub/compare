@@ -96,7 +96,7 @@ public class MainSettingActivity extends BaseActivity {
 
     @Override
     protected String getActionBarTitle() {
-        return LocaleController.getString("NullSettings", R.string.NullSettings);
+        return LocaleController.getString("NnnSettings", R.string.NullSettings);
     }
 
     @Override
@@ -111,9 +111,9 @@ public class MainSettingActivity extends BaseActivity {
         } else if (position == channelRow) {
             MessagesController.getInstance(currentAccount).openByUserName(LocaleController.getString("OfficialChannelName", R.string.OfficialChannelName), this, 1);
         } else if (position == websiteRow) {
-            Browser.openUrl(getParentActivity(), "https://qwq2333.top");
+            Browser.openUrl(getParentActivity(), "https://nextalone.xyz");
         } else if (position == sourceCodeRow) {
-            Browser.openUrl(getParentActivity(), "https://github.com/qwq233/Nullgram");
+            Browser.openUrl(getParentActivity(), "https://github.com/PreviousAlone/nnngram");
         } else if (position == licenseRow) {
             presentFragment(new LicenseActivity());
         } else if (position == updateRow) {
@@ -277,7 +277,7 @@ public class MainSettingActivity extends BaseActivity {
                     if (position == channelRow) {
                         textCell.setTextAndValue(LocaleController.getString("OfficialChannel", R.string.OfficialChannel), "@" + LocaleController.getString("OfficialChannelName", R.string.OfficialChannelName), true);
                     } else if (position == websiteRow) {
-                        textCell.setTextAndValue(LocaleController.getString("OfficialSite", R.string.OfficialSite), "qwq2333.top", true);
+                        textCell.setTextAndValue(LocaleController.getString("OfficialSite", R.string.OfficialSite), "nextalone.xyz", true);
                     } else if (position == sourceCodeRow) {
                         textCell.setTextAndValue(LocaleController.getString("ViewSourceCode", R.string.ViewSourceCode), "GitHub", true);
                     } else if (position == licenseRow) {
@@ -324,7 +324,7 @@ public class MainSettingActivity extends BaseActivity {
     private void backupSettings() {
 
         try {
-            File cacheFile = new File(ApplicationLoader.applicationContext.getCacheDir(), DateFormat.format("yyyyMMdd", System.currentTimeMillis()) + "-nullgram-settings.json");
+            File cacheFile = new File(ApplicationLoader.applicationContext.getCacheDir(), DateFormat.format("yyyyMMdd", System.currentTimeMillis()) + "-nnngram-settings.json");
             FileUtils.writeUtf8String(ConfigManager.exportConfigurationToJson(), cacheFile);
             ShareUtil.shareFile(getParentActivity(), cacheFile);
         } catch (JSONException e) {

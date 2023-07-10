@@ -680,6 +680,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
     private Runnable recordAudioVideoRunnable = new Runnable() {
         @Override
         public void run() {
+            if (ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom)) {
+                return;
+            }
             if (delegate == null || parentActivity == null) {
                 return;
             }
@@ -2037,8 +2040,6 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
 
             @Override
             public boolean onTouchEvent(MotionEvent motionEvent) {
-                if (ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom))
-                    return true;
                 createRecordCircle();
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     if (recordCircle.isSendButtonVisible()) {
@@ -2206,7 +2207,10 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             }
         };
         audioVideoButtonContainer.setSoundEffectsEnabled(false);
-        sendButtonContainer.addView(audioVideoButtonContainer, LayoutHelper.createFrame(48, 48));
+        if (!ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom))
+            sendButtonContainer.addView(audioVideoButtonContainer, LayoutHelper.createFrame(48, 48));
+        else
+            audioVideoButtonContainer.setVisibility(GONE);
         audioVideoButtonContainer.setFocusable(true);
         audioVideoButtonContainer.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
 //        audioVideoButtonContainer.setOnTouchListener((view, motionEvent) -> {
@@ -2530,13 +2534,22 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 return super.onTouchEvent(event);
             }
         };
-        sendButton.setVisibility(INVISIBLE);
+        if (ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom))
+            sendButton.setVisibility(VISIBLE);
+        else
+            sendButton.setVisibility(INVISIBLE);
         int color = getThemedColor(Theme.key_chat_messagePanelSend);
         sendButton.setContentDescription(LocaleController.getString("Send", R.string.Send));
         sendButton.setSoundEffectsEnabled(false);
-        sendButton.setScaleX(0.1f);
-        sendButton.setScaleY(0.1f);
-        sendButton.setAlpha(0.0f);
+        if (ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom)) {
+            sendButton.setScaleX(1.0f);
+            sendButton.setScaleY(1.0f);
+            sendButton.setAlpha(1.0f);
+        } else {
+            sendButton.setScaleX(0.1f);
+            sendButton.setScaleY(0.1f);
+            sendButton.setAlpha(0.0f);
+        }
         if (Build.VERSION.SDK_INT >= 21) {
             sendButton.setBackgroundDrawable(Theme.createSelectorDrawable(Color.argb(24, Color.red(color), Color.green(color), Color.blue(color)), 1));
         }
@@ -5822,7 +5835,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 Theme.setSelectorDrawableColor(sendButton.getBackground(), Color.argb(24, Color.red(color), Color.green(color), Color.blue(color)), true);
             }
 
-            if (audioVideoButtonContainer.getVisibility() == VISIBLE || slowModeButton.getVisibility() == VISIBLE || showBotButton || showSendButton) {
+            if (audioVideoButtonContainer.getVisibility() == VISIBLE || (ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom) && sendButton.getVisibility() == VISIBLE) || slowModeButton.getVisibility() == VISIBLE || showBotButton || showSendButton) {
                 if (animated) {
                     if (runningAnimationType == 1 && caption == null || runningAnimationType == 3 && caption != null) {
                         return;
@@ -6241,15 +6254,21 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                         delegate.onAttachButtonShow();
                     }
                 }
-
-                audioVideoButtonContainer.setVisibility(VISIBLE);
+                if (ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom)){
+                    sendButton.setVisibility(VISIBLE);
+                }else {
+                    audioVideoButtonContainer.setVisibility(VISIBLE);
+                }
                 runningAnimation = new AnimatorSet();
                 runningAnimationType = 2;
 
                 ArrayList<Animator> animators = new ArrayList<>();
+                if (ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom)) {
+                    animators.add(ObjectAnimator.ofFloat(sendButton, View.SCALE_X, 1.0f));
+                    animators.add(ObjectAnimator.ofFloat(sendButton, View.SCALE_Y, 1.0f));
+                }
                 animators.add(ObjectAnimator.ofFloat(audioVideoButtonContainer, View.SCALE_X, 1.0f));
                 animators.add(ObjectAnimator.ofFloat(audioVideoButtonContainer, View.SCALE_Y, 1.0f));
-
                 float alpha = 1.0f;
                 TLRPC.Chat chat = parentFragment.getCurrentChat();
                 TLRPC.UserFull userFull = parentFragment.getCurrentUserInfo();
@@ -6259,6 +6278,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     alpha = userFull.voice_messages_forbidden ? 0.5f : 1.0f;
                 }
 
+                if (ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom))
+                    animators.add(ObjectAnimator.ofFloat(sendButton, View.ALPHA, alpha));
                 animators.add(ObjectAnimator.ofFloat(audioVideoButtonContainer, View.ALPHA, alpha));
                 if (cancelBotButton.getVisibility() == VISIBLE) {
                     animators.add(ObjectAnimator.ofFloat(cancelBotButton, View.SCALE_X, 0.1f));
@@ -6273,9 +6294,11 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     animators.add(ObjectAnimator.ofFloat(slowModeButton, View.SCALE_Y, 0.1f));
                     animators.add(ObjectAnimator.ofFloat(slowModeButton, View.ALPHA, 0.0f));
                 } else {
-                    animators.add(ObjectAnimator.ofFloat(sendButton, View.SCALE_X, 0.1f));
-                    animators.add(ObjectAnimator.ofFloat(sendButton, View.SCALE_Y, 0.1f));
-                    animators.add(ObjectAnimator.ofFloat(sendButton, View.ALPHA, 0.0f));
+                    if (!ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom)) {
+                        animators.add(ObjectAnimator.ofFloat(sendButton, View.SCALE_X, 0.1f));
+                        animators.add(ObjectAnimator.ofFloat(sendButton, View.SCALE_Y, 0.1f));
+                        animators.add(ObjectAnimator.ofFloat(sendButton, View.ALPHA, 0.0f));
+                    }
                 }
 
                 runningAnimation.playTogether(animators);
@@ -6288,8 +6311,12 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                             runningAnimation = null;
                             runningAnimationType = 0;
 
-                            if (audioVideoButtonContainer != null) {
-                                audioVideoButtonContainer.setVisibility(VISIBLE);
+                            if (ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom)) {
+                                sendButton.setVisibility(VISIBLE);
+                            } else {
+                                if (audioVideoButtonContainer != null) {
+                                    audioVideoButtonContainer.setVisibility(VISIBLE);
+                                }
                             }
                         }
                     }
@@ -6307,10 +6334,17 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 slowModeButton.setScaleY(0.1f);
                 slowModeButton.setAlpha(0.0f);
                 setSlowModeButtonVisible(false);
-                sendButton.setScaleX(0.1f);
-                sendButton.setScaleY(0.1f);
-                sendButton.setAlpha(0.0f);
-                sendButton.setVisibility(GONE);
+                if (!ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom)) {
+                    sendButton.setScaleX(0.1f);
+                    sendButton.setScaleY(0.1f);
+                    sendButton.setAlpha(0.0f);
+                    sendButton.setVisibility(GONE);
+                } else {
+                    sendButton.setScaleX(1.0f);
+                    sendButton.setScaleY(1.0f);
+                    sendButton.setAlpha(1.0f);
+                    sendButton.setVisibility(VISIBLE);
+                }
                 cancelBotButton.setScaleX(0.1f);
                 cancelBotButton.setScaleY(0.1f);
                 cancelBotButton.setAlpha(0.0f);
@@ -6321,13 +6355,17 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     expandStickersButton.setAlpha(0.0f);
                     expandStickersButton.setVisibility(GONE);
                 }
-                audioVideoButtonContainer.setScaleX(1.0f);
-                audioVideoButtonContainer.setScaleY(1.0f);
-                audioVideoButtonContainer.setAlpha(1.0f);
-                audioVideoButtonContainer.setVisibility(VISIBLE);
+                if (!ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom)) {
+                    audioVideoButtonContainer.setScaleX(1.0f);
+                    audioVideoButtonContainer.setScaleY(1.0f);
+                    audioVideoButtonContainer.setAlpha(1.0f);
+                    audioVideoButtonContainer.setVisibility(VISIBLE);
+                }
                 if (attachLayout != null) {
                     if (getVisibility() == VISIBLE) {
-                        delegate.onAttachButtonShow();
+                        if (delegate != null) {
+                            delegate.onAttachButtonShow();
+                        }
                     }
                     attachLayout.setAlpha(1.0f);
                     attachLayout.setScaleX(1.0f);
@@ -7353,10 +7391,17 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 audioVideoButtonContainer.setAlpha(0.0f);
                 audioVideoButtonContainer.setVisibility(GONE);
             } else {
-                sendButton.setScaleX(0.1f);
-                sendButton.setScaleY(0.1f);
-                sendButton.setAlpha(0.0f);
-                sendButton.setVisibility(GONE);
+                if (ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom)) {
+                    sendButton.setScaleX(1.0f);
+                    sendButton.setScaleY(1.0f);
+                    sendButton.setAlpha(1.0f);
+                    sendButton.setVisibility(VISIBLE);
+                } else {
+                    sendButton.setScaleX(0.1f);
+                    sendButton.setScaleY(0.1f);
+                    sendButton.setAlpha(0.0f);
+                    sendButton.setVisibility(GONE);
+                }
                 slowModeButton.setScaleX(0.1f);
                 slowModeButton.setScaleY(0.1f);
                 slowModeButton.setAlpha(0.0f);
@@ -7364,10 +7409,12 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 attachLayout.setScaleX(1.0f);
                 attachLayout.setAlpha(1.0f);
                 attachLayout.setVisibility(VISIBLE);
-                audioVideoButtonContainer.setScaleX(1.0f);
-                audioVideoButtonContainer.setScaleY(1.0f);
-                audioVideoButtonContainer.setAlpha(1.0f);
-                audioVideoButtonContainer.setVisibility(VISIBLE);
+                if (!ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom)) {
+                    audioVideoButtonContainer.setScaleX(1.0f);
+                    audioVideoButtonContainer.setScaleY(1.0f);
+                    audioVideoButtonContainer.setAlpha(1.0f);
+                    audioVideoButtonContainer.setVisibility(VISIBLE);
+                }
             }
             createScheduledButton();
             if (scheduledButton != null && scheduledButton.getTag() != null) {
@@ -7397,7 +7444,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
     }
 
     public View getSendButton() {
-        return sendButton.getVisibility() == VISIBLE ? sendButton : audioVideoButtonContainer;
+        return sendButton.getVisibility() == VISIBLE || ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom) ? sendButton : audioVideoButtonContainer;
     }
 
     public View getAudioVideoButtonContainer() {
@@ -7753,7 +7800,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         boolean isVisible = defPeer != null && (delegate.getSendAsPeers() == null || delegate.getSendAsPeers().peers.size() > 1) &&
             !isEditingMessage() && !isRecordingAudioVideo() && (recordedAudioPanel == null || recordedAudioPanel.getVisibility() != View.VISIBLE);
         if (isVisible) {
-            createSenderSelectView();
+            if (!ConfigManager.getBooleanOrFalse(Defines.hideSendAsButton)) {
+                createSenderSelectView();
+            }
         }
         if (defPeer != null) {
             if (defPeer.channel_id != 0) {
@@ -7810,8 +7859,10 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     @Override
                     public void onAnimationStart(Animator animation) {
                         if (isVisible) {
-                            createSenderSelectView();
-                            senderSelectView.setVisibility(VISIBLE);
+                            if (!ConfigManager.getBooleanOrFalse(Defines.hideSendAsButton)) {
+                                createSenderSelectView();
+                                senderSelectView.setVisibility(VISIBLE);
+                            }
                         }
                         float tx = 0;
                         if (senderSelectView != null) {
@@ -7842,7 +7893,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     public void onAnimationCancel(Animator animation) {
                         float tx = 0;
                         if (isVisible) {
-                            createSenderSelectView();
+                            if (!ConfigManager.getBooleanOrFalse(Defines.hideSendAsButton)) {
+                                createSenderSelectView();
+                            }
                         }
                         if (senderSelectView != null) {
                             senderSelectView.setVisibility(isVisible ? VISIBLE : GONE);
@@ -7861,7 +7914,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
             } else {
                 if (isVisible) {
-                    createSenderSelectView();
+                    if (!ConfigManager.getBooleanOrFalse(Defines.hideSendAsButton)) {
+                        createSenderSelectView();
+                    }
                 }
                 if (senderSelectView != null) {
                     senderSelectView.setVisibility(isVisible ? VISIBLE : GONE);
@@ -7912,7 +7967,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     botButton.setContentDescription(LocaleController.getString("AccDescrBotKeyboard", R.string.AccDescrBotKeyboard));
                 }
             } else {
-                if (!canShowBotsMenu) {
+                if (!canShowBotsMenu && !ConfigManager.getBooleanOrFalse(Defines.hideInputFieldBotButton)) {
                     createBotButton();
                     botButtonDrawable.setIcon(R.drawable.input_bot1, true);
                     botButton.setContentDescription(LocaleController.getString("AccDescrBotCommands", R.string.AccDescrBotCommands));

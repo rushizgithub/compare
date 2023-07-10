@@ -7,10 +7,10 @@ import java.util.Date
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
-    id("com.github.triplet.play") version "3.8.4"
+    id("com.github.triplet.play") version "3.8.3"
+    kotlin("android")
     kotlin("plugin.serialization") version Version.kotlin
 }
 
@@ -88,13 +88,14 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:${Version.ktor}")
     implementation("io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}")
     implementation("ws.vinta:pangu:1.1.0")
+    implementation("com.mikepenz:aboutlibraries:10.7.0")
 
     implementation(project(":tcp2ws"))
 }
 
 
 dependencies {
-    val appCenterSdkVersion = "5.0.2"
+    val appCenterSdkVersion = "5.0.1"
     implementation("com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}")
     implementation("com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}")
 }
@@ -198,40 +199,40 @@ android {
                 abiFilters.add("arm64-v8a")
             }
         }
-        create("arm32") {
-            dimension = "abi"
-            buildConfigField("boolean", "isPlay", "false")
-            ndk {
-                abiFilters.add("armeabi-v7a")
-            }
-        }
-        create("x86") {
-            dimension = "abi"
-            buildConfigField("boolean", "isPlay", "false")
-            ndk {
-                abiFilters.add("x86")
-            }
-        }
-        create("x86_64") {
-            dimension = "abi"
-            buildConfigField("boolean", "isPlay", "false")
-            ndk {
-                abiFilters.add("x86_64")
-            }
-        }
+//        create("arm32") {
+//            dimension = "abi"
+//            buildConfigField("boolean", "isPlay", "false")
+//            ndk {
+//                abiFilters.add("armeabi-v7a")
+//            }
+//        }
+//        create("x86") {
+//            dimension = "abi"
+//            buildConfigField("boolean", "isPlay", "false")
+//            ndk {
+//                abiFilters.add("x86")
+//            }
+//        }
+//        create("x86_64") {
+//            dimension = "abi"
+//            buildConfigField("boolean", "isPlay", "false")
+//            ndk {
+//                abiFilters.add("x86_64")
+//            }
+//        }
 
-        create("play") {
-            dimension = "abi"
-            buildConfigField("boolean", "isPlay", "true")
-            ndk {
-                abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
-            }
-        }
+//        create("play") {
+//            dimension = "abi"
+//            buildConfigField("boolean", "isPlay", "true")
+//            ndk {
+//                abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
+//            }
+//        }
     }
 
     applicationVariants.all {
         val outputFileName =
-            "Nullgram-${defaultConfig.versionName}-${productFlavors.first().name}.apk"
+            "Nnngram-${defaultConfig.versionName}-${productFlavors.first().name}.apk"
         outputs.all {
             val output = this as? com.android.build.gradle.internal.api.BaseVariantOutputImpl
             output?.outputFileName = outputFileName
@@ -239,7 +240,3 @@ android {
         }
     }
 }
-
-
-tasks.register<ReplaceIcon>("replaceIcon") {}
-tasks.getByName("preBuild").dependsOn(tasks.getByName("replaceIcon"))

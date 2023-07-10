@@ -22,7 +22,7 @@ package top.qwq2333.nullgram.utils
 import android.util.Log
 
 object Log {
-    const val TAG = "Nullgram"
+    const val TAG = "Nnngram"
 
     /**
      * 日志等级 Debug

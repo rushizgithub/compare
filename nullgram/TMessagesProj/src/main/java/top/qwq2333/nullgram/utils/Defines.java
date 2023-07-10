@@ -20,6 +20,11 @@
 package top.qwq2333.nullgram.utils;
 
 
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+
+import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.R;
+
 /**
  * ConfigManager用到的Key都塞这 统一管理比较方便些
  */
@@ -42,6 +47,7 @@ public class Defines {
     public static final String linkedUserPrefix = "linkedUser_";
     public static final String overrideChannelAlias = "overrideChannelAlias";
     public static final String hidePhone = "hidePhone";
+    public static final String hideProfilePhone = "hideProfilePhone";
     public static final String openArchiveOnPull = "openArchiveOnPull";
     public static final String disableJumpToNextChannel = "disableJumpToNextChannel";
     public static final String verifyLinkTip = "verifyLinkTip";
@@ -84,6 +90,7 @@ public class Defines {
     public static final String modifyDownloadSpeed = "modifyDownloadSpeed";
     public static final String disablePreviewVideoSoundShortcut = "disablePreviewVideoSoundShortcut";
     public static final String quickToggleAnonymous = "quickToggleAnonymous";
+    public static final String hideSendAsButton = "hideSendAsButton";
     public static final String hideProxySponsorChannel = "hideProxySponsorChannel";
     public static final String hideAllTab = "hideAllTab";
     public static final String ignoreMutedCount = "ignoreMutedCount";
@@ -95,6 +102,32 @@ public class Defines {
     public static final String enablePanguOnSending = "enablePanguOnSending";
     public static final String enablePanguOnReceiving = "enablePanguOnReceiving";
     public static final String showExactTime = "showExactTime";
+    /**
+     * 0 default 1 online 2 offline
+     */
+    public static final String keepOnlineStatusAs = "keepOnlineStatusAs";
+
+    // Nnngram
+    public static final String doNotUnarchiveBySwipe = "doNotUnarchiveBySwipe";
+    public static final String hideInputFieldBotButton = "hideInputFieldBotButton";
+    public static final String hideMessageSeenTooltip = "hideMessageSeenTooltip";
+    public static final String disableNotificationBubble = "disableNotificationBubble";
+    public static final String showOnlineStatus = "showOnlineStatus";
+    public static final String disablePhotoSideAction = "disablePhotoSideAction";
+    public static final String filterZalgo = "filterZalgo";
+    public static final String ignoreFolderUnreadCount = "ignoreFolderUnreadCount";
+    public static final String ignoreChatStrict = "ignoreChatStrict";
+    public static final String customTitle = "customTitle";
+    public static final String deleteMessageForBoth = "deleteMessageForBoth";
+    public static final String textStyleSettings = "textStyleSettings";
+
+    // Drawer List
+    public static final String showNewGroup = "showNewGroup";
+    public static final String showContacts = "showContacts";
+    public static final String showCalls = "showCalls";
+    public static final String showPeopleNearby = "showPeopleNearby";
+    public static final String showSavedMessages = "showSavedMessages";
+    public static final String showChangeEmojiStatus = "showChangeEmojiStatus";
 
     // Custom API
     public static final String customAPI = "customAPI";
@@ -113,7 +146,23 @@ public class Defines {
     public static final String showSaveMessages = "showSaveMessages";
     public static final String showViewHistory = "showViewHistory";
     public static final String showRepeat = "showRepeat";
+    public static final String showRepeatAsCopy = "showRepeatAsCopy";
+    public static final String showReverse = "showReverse";
     public static final String showCopyPhoto = "showCopyPhoto";
+    public static final String showReactions = "showReaction";
+    public static final String showReport = "showReport";
+
+    // Text Style
+    public static final String showTextSpoiler = "showTextSpoiler";
+    public static final String showTextBold = "showTextBold";
+    public static final String showTextItalic = "showTextItalic";
+    public static final String showTextMono = "showTextMono";
+    public static final String showTextStrike = "showTextStrike";
+    public static final String showTextUnderline = "showTextUnderline";
+    public static final String showTextCreateMention = "showTextCreateMention";
+    public static final String showTextCreateLink = "showTextCreateLink";
+    public static final String showTextRegular = "showTextRegular";
+
 
     // custom double tap
     public static final String doubleTab = "doubleTab";
@@ -124,6 +173,9 @@ public class Defines {
     public static final int doubleTabRepeat = 4;
     public static final int doubleTabEdit = 5;
     public static final int doubleTabTranslate = 6;
+    public static final int doubleTabRepeatAsCopy = 7;
+    public static final int doubleTabReverse = 8;
+
 
     // Auto Update
     public static final String ignoredUpdateTag = "skipUpdate";
@@ -164,13 +216,12 @@ public class Defines {
 
     // Misc
     public static final long[] officialID = {
-        966253902,  // Developer
-        1668888324, // Channel
-        1578562490, // Developer Channel
-        1645976613, // Update Channel
-        1714986438, // CI Channel
-        1477185964, // Discussion Group
-        1068402676  // Kitsune
+        1645699549, // Update Channel
+        1500637449, // Discussion Group
+        966253902,  // gcs
+        1068402676, // Kitsune
+        784901712,  // Next Alone
+        457896977   // Queally rw
     };
     /**
      * 数组中元素未找到的下标，值为-1

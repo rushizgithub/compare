@@ -1145,10 +1145,10 @@ public class LocaleController {
             value = "LOC_ERR:" + key;
         }
 
-        if (value.contains("Telegram"))
-            value = value.replace("Telegram", "Nullgram");
-        if (value.contains("TELEOFFICIAL"))
-            value = value.replace("TELEOFFICIAL", "Telegram");
+//        if (value.contains("Telegram"))
+//            value = value.replace("Telegram", "Nnngram");
+//        if (value.contains("TELEOFFICIAL"))
+//            value = value.replace("TELEOFFICIAL", "Telegram");
         return value;
     }
 
@@ -1283,11 +1283,11 @@ public class LocaleController {
                 }
             }
 
-            if (value.contains("Telegram")) {
-                value = value.replace("Telegram", "Nullgram");
-            }
+//            if (value.contains("Telegram")) {
+//                value = value.replace("Telegram", "Nullgram");
+//            }
             if (value.contains("TELEOFFICIAL")) {
-                value = value.replace("TELEOFFICIAL", "Telegram");
+                value = value.replace("TELEOFFICIAL", "Telegram");  
             }
 
             if (getInstance().currentLocale != null) {

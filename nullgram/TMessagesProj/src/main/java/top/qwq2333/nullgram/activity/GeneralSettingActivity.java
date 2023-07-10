@@ -23,18 +23,26 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
 import android.transition.TransitionManager;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.text.HtmlCompat;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LanguageDetector;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.messenger.UserConfig;
+import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.DrawerLayoutContainer;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.HeaderCell;
@@ -45,6 +53,8 @@ import org.telegram.ui.Cells.TextDetailSettingsCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.BulletinFactory;
+import org.telegram.ui.Components.EditTextBoldCursor;
+import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
@@ -72,6 +82,8 @@ public class GeneralSettingActivity extends BaseActivity {
     private int avatarBackgroundDarkenRow;
     private int largeAvatarAsBackgroundRow;
     private int hidePhoneRow;
+    private int hideProfilePhoneRow;
+    private int drawerListRow;
     private int drawer2Row;
 
     private int translatorRow;
@@ -84,7 +96,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int autoTranslateRow;
     private int translator2Row;
 
-
+    private int customTitleRow;
     private int showBotAPIRow;
     private int showExactNumberRow;
     private int showExactTimeRow;
@@ -95,7 +107,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int openArchiveOnPullRow;
     private int hideAllTabRow;
     private int ignorMutedCountRow;
-
+    private int ignoreFolderUnreadCountRow;
 
     private int devicesRow;
     private int useSystemEmojiRow;
@@ -120,7 +132,11 @@ public class GeneralSettingActivity extends BaseActivity {
 
     @Override
     protected void onItemClick(View view, int position, float x, float y) {
-        if (position == showBotAPIRow) {
+        if (position == customTitleRow) {
+            setCustomTitle(view, position);
+            listAdapter.notifyItemChanged(position, PARTIAL);
+        }
+        else if (position == showBotAPIRow) {
             ConfigManager.toggleBoolean(Defines.showBotAPIID);
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.showBotAPIID));
@@ -133,6 +149,16 @@ public class GeneralSettingActivity extends BaseActivity {
             parentLayout.rebuildAllFragmentViews(false, false);
             getNotificationCenter().postNotificationName(NotificationCenter.mainUserInfoChanged);
             listAdapter.notifyItemChanged(drawerRow, PARTIAL);
+        } else if (position == hideProfilePhoneRow) {
+            ConfigManager.toggleBoolean(Defines.hideProfilePhone);
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.hideProfilePhone));
+            }
+            parentLayout.rebuildAllFragmentViews(false, false);
+            getNotificationCenter().postNotificationName(NotificationCenter.mainUserInfoChanged);
+            listAdapter.notifyItemChanged(drawerRow, PARTIAL);
+        } else if (position == drawerListRow) {
+            showDrawerListAlert();
         } else if (position == avatarAsDrawerBackgroundRow) {
             ConfigManager.toggleBoolean(Defines.avatarAsDrawerBackground);
             if (view instanceof TextCheckCell) {
@@ -248,6 +274,11 @@ public class GeneralSettingActivity extends BaseActivity {
             ConfigManager.toggleBoolean(Defines.ignoreMutedCount);
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.ignoreMutedCount));
+            }
+        } else if (position == ignoreFolderUnreadCountRow) {
+            ConfigManager.toggleBoolean(Defines.ignoreFolderUnreadCount);
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.ignoreFolderUnreadCount));
             }
         } else if (position == autoDisableBuiltInProxyRow) {
             ConfigManager.toggleBoolean(Defines.autoDisableBuiltInProxy);
@@ -371,6 +402,8 @@ public class GeneralSettingActivity extends BaseActivity {
             largeAvatarAsBackgroundRow = -1;
         }
         hidePhoneRow = addRow("hidePhone");
+        hideProfilePhoneRow = addRow("hideProfilePhone");
+        drawerListRow = addRow("drawerList");
         drawer2Row = addRow();
 
         translatorRow = addRow();
@@ -394,6 +427,7 @@ public class GeneralSettingActivity extends BaseActivity {
 
 
         generalRow = addRow();
+        customTitleRow = addRow("customTitle");
         showBotAPIRow = addRow("showBotAPI");
         showExactNumberRow = addRow("showExactNumber");
         showExactTimeRow = addRow("showExactTime");
@@ -404,6 +438,7 @@ public class GeneralSettingActivity extends BaseActivity {
         hideAllTabRow = addRow("hideAllTab");
         ignorMutedCountRow = addRow("ignoreMutedCount");
         tabsTitleTypeRow = addRow("tabsTitleType");
+        ignoreFolderUnreadCountRow = addRow("ignoreFolderUnreadCount");
         general2Row = addRow();
 
         devicesRow = addRow();
@@ -549,6 +584,11 @@ public class GeneralSettingActivity extends BaseActivity {
                             value = LocaleController.formatPluralString("Languages", langCodes.size());
                         }
                         textCell.setTextAndValue(LocaleController.getString("DoNotTranslate", R.string.DoNotTranslate), value, payload, true);
+                    } else if (position == customTitleRow) {
+                        textCell.setTextAndValue(LocaleController.getString("customTitle", R.string.customTitle),
+                            ConfigManager.getStringOrDefault(Defines.customTitle, "Nnngram"), payload, true);
+                    } else if (position == drawerListRow) {
+                        textCell.setText(LocaleController.getString("drawerList", R.string.drawerList), false);
                     }
                     break;
                 }
@@ -559,6 +599,8 @@ public class GeneralSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("showBotAPIID", R.string.showBotAPIID), ConfigManager.getBooleanOrFalse(Defines.showBotAPIID), true);
                     } else if (position == hidePhoneRow) {
                         textCell.setTextAndCheck(LocaleController.getString("hidePhone", R.string.hidePhone), ConfigManager.getBooleanOrFalse(Defines.hidePhone), true);
+                    } else if (position == hideProfilePhoneRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("hideProfilePhone", R.string.hideProfilePhone), ConfigManager.getBooleanOrFalse(Defines.hideProfilePhone), true);
                     } else if (position == showExactNumberRow) {
                         textCell.setTextAndCheck(LocaleController.getString("showExactNumber", R.string.showExactNumber), ConfigManager.getBooleanOrFalse(Defines.showExactNumber), true);
                     } else if (position == showExactTimeRow) {
@@ -599,6 +641,8 @@ public class GeneralSettingActivity extends BaseActivity {
                                 R.string.AutoTranslateAbout), TranslateHelper.getAutoTranslate(), true, false);
                     } else if (position == showOriginalRow) {
                         textCell.setTextAndCheck(LocaleController.getString("TranslatorShowOriginal", R.string.TranslatorShowOriginal), TranslateHelper.getShowOriginal(), true);
+                    } else if (position == ignoreFolderUnreadCountRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("ignoreFolderUnreadCount", R.string.ignoreFolderUnreadCount), ConfigManager.getBooleanOrFalse(Defines.ignoreFolderUnreadCount), true);
                     }
                     break;
                 }
@@ -686,7 +730,8 @@ public class GeneralSettingActivity extends BaseActivity {
             if (position == general2Row || position == drawer2Row || position == translator2Row || position == devices2Row) {
                 return 1;
             } else if (position == tabsTitleTypeRow || position == translationProviderRow || position == deepLFormalityRow || position == translationTargetRow ||
-                position == translatorTypeRow || position == doNotTranslateRow || position == overrideDevicePerformanceRow) {
+                position == translatorTypeRow || position == doNotTranslateRow || position == overrideDevicePerformanceRow || position == customTitleRow ||
+                position == drawerListRow) {
                 return 2;
             } else if (position == generalRow || position == translatorRow || position == devicesRow) {
                 return 4;
@@ -708,5 +753,126 @@ public class GeneralSettingActivity extends BaseActivity {
             langCodes.add(currentLang);
         }
         return langCodes;
+    }
+
+    private void setCustomTitle(View view, int pos) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+        builder.setTitle(LocaleController.getString("setCustomTitle", R.string.setCustomTitle));
+
+        final EditTextBoldCursor editText = new EditTextBoldCursor(getParentActivity()) {
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(64), MeasureSpec.EXACTLY));
+            }
+        };
+        editText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
+        editText.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
+        editText.setHintText("Nnngram");
+        editText.setText(ConfigManager.getStringOrDefault(Defines.customTitle, "Nnngram"));
+        editText.setHeaderHintColor(getThemedColor(Theme.key_windowBackgroundWhiteBlueHeader));
+        editText.setSingleLine(true);
+        editText.setFocusable(true);
+        editText.setTransformHintToHeader(true);
+        editText.setLineColors(getThemedColor(Theme.key_windowBackgroundWhiteInputField), getThemedColor(Theme.key_windowBackgroundWhiteInputFieldActivated), getThemedColor(Theme.key_text_RedRegular));
+        editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        editText.setBackgroundDrawable(null);
+        editText.requestFocus();
+        editText.setPadding(0, 0, 0, 0);
+        builder.setView(editText);
+
+        builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), (dialogInterface, i) -> {
+            if (editText.getText().toString().trim().equals("")) {
+                ConfigManager.putString(Defines.customTitle, "Nnngram");
+            } else {
+                ConfigManager.putString(Defines.customTitle, editText.getText().toString());
+            }
+            listAdapter.notifyItemChanged(pos, PARTIAL);
+        });
+        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+        builder.show().setOnShowListener(dialog -> {
+            editText.requestFocus();
+            AndroidUtilities.showKeyboard(editText);
+        });
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) editText.getLayoutParams();
+        if (layoutParams != null) {
+            if (layoutParams instanceof FrameLayout.LayoutParams) {
+                ((FrameLayout.LayoutParams) layoutParams).gravity = Gravity.CENTER_HORIZONTAL;
+            }
+            layoutParams.rightMargin = layoutParams.leftMargin = AndroidUtilities.dp(24);
+            layoutParams.height = AndroidUtilities.dp(36);
+            editText.setLayoutParams(layoutParams);
+        }
+        editText.setSelection(0, editText.getText().length());
+    }
+
+    private void showDrawerListAlert() {
+        if (getParentActivity() == null) {
+            return;
+        }
+        Context context = getParentActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(LocaleController.getString("drawerList", R.string.drawerList));
+
+        LinearLayout linearLayout = new LinearLayout(context);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout linearLayoutInviteContainer = new LinearLayout(context);
+        linearLayoutInviteContainer.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.addView(linearLayoutInviteContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+
+//        public static final String showNewGroup = "showNewGroup";
+//        public static final String showContacts = "showContacts";
+//        public static final String showCalls = "showCalls";
+//        public static final String showPeopleNearby = "showPeopleNearby";
+//        public static final String showSavedMessages = "showSavedMessages";
+
+        boolean isPremium = UserConfig.getInstance(UserConfig.selectedAccount).isPremium();
+        int count = isPremium ? 6 : 5;
+        for (int a = 0; a < count; a++) {
+            TextCheckCell textCell = new TextCheckCell(context);
+            switch (a) {
+                case 0 -> textCell.setTextAndCheck(LocaleController.getString("NewGroup", R.string.NewGroup), ConfigManager.getBooleanOrDefault(Defines.showNewGroup, true), false);
+                case 1 -> textCell.setTextAndCheck(LocaleController.getString("Contacts", R.string.Contacts), ConfigManager.getBooleanOrDefault(Defines.showContacts, true), false);
+                case 2 -> textCell.setTextAndCheck(LocaleController.getString("Calls", R.string.Calls), ConfigManager.getBooleanOrDefault(Defines.showCalls, true), false);
+                case 3 -> textCell.setTextAndCheck(LocaleController.getString("PeopleNearby", R.string.PeopleNearby), ConfigManager.getBooleanOrDefault(Defines.showPeopleNearby, true), false);
+                case 4 -> textCell.setTextAndCheck(LocaleController.getString("SavedMessages", R.string.SavedMessages), ConfigManager.getBooleanOrDefault(Defines.showSavedMessages, true), false);
+                case 5 -> textCell.setTextAndCheck(LocaleController.getString("ChangeEmojiStatus", R.string.ChangeEmojiStatus), ConfigManager.getBooleanOrDefault(Defines.showChangeEmojiStatus, true), false);
+            }
+            textCell.setTag(a);
+            textCell.setBackground(Theme.getSelectorDrawable(false));
+            linearLayoutInviteContainer.addView(textCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+            textCell.setOnClickListener(v2 -> {
+                Integer tag = (Integer) v2.getTag();
+                switch (tag) {
+                    case 0 -> {
+                        ConfigManager.toggleBoolean(Defines.showNewGroup);
+                        textCell.setChecked(ConfigManager.getBooleanOrDefault(Defines.showNewGroup, true));
+                    }
+                    case 1 -> {
+                        ConfigManager.toggleBoolean(Defines.showContacts);
+                        textCell.setChecked(ConfigManager.getBooleanOrDefault(Defines.showContacts, true));
+                    }
+                    case 2 -> {
+                        ConfigManager.toggleBoolean(Defines.showCalls);
+                        textCell.setChecked(ConfigManager.getBooleanOrDefault(Defines.showCalls, true));
+                    }
+                    case 3 -> {
+                        ConfigManager.toggleBoolean(Defines.showPeopleNearby);
+                        textCell.setChecked(ConfigManager.getBooleanOrDefault(Defines.showPeopleNearby, true));
+                    }
+                    case 4 -> {
+                        ConfigManager.toggleBoolean(Defines.showSavedMessages);
+                        textCell.setChecked(ConfigManager.getBooleanOrDefault(Defines.showSavedMessages, true));
+                    }
+                    case 5 -> {
+                        ConfigManager.toggleBoolean(Defines.showChangeEmojiStatus);
+                        textCell.setChecked(ConfigManager.getBooleanOrDefault(Defines.showChangeEmojiStatus, true));
+                    }
+                }
+            });
+        }
+        builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
+        builder.setView(linearLayout);
+        showDialog(builder.create());
     }
 }

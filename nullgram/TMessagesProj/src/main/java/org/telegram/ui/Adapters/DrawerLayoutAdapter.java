@@ -35,7 +35,9 @@ import org.telegram.ui.Components.SideMenultItemAnimator;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import top.qwq2333.nullgram.config.ConfigManager;
 import top.qwq2333.nullgram.helpers.PasscodeHelper;
+import top.qwq2333.nullgram.utils.Defines;
 
 public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
 
@@ -311,27 +313,37 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             peopleNearbyIcon = R.drawable.msg_nearby;
         }
         UserConfig me = UserConfig.getInstance(UserConfig.selectedAccount);
-        if (me != null && me.isPremium()) {
-            if (me.getEmojiStatus() != null) {
-                items.add(new Item(15, LocaleController.getString("ChangeEmojiStatus", R.string.ChangeEmojiStatus), R.drawable.msg_status_edit));
-            } else {
-                items.add(new Item(15, LocaleController.getString("SetEmojiStatus", R.string.SetEmojiStatus), R.drawable.msg_status_set));
+        if (ConfigManager.getBooleanOrDefault(Defines.showChangeEmojiStatus, true)) {
+            if (me != null && me.isPremium()) {
+                if (me.getEmojiStatus() != null) {
+                    items.add(new Item(15, LocaleController.getString("ChangeEmojiStatus", R.string.ChangeEmojiStatus), R.drawable.msg_status_edit));
+                } else {
+                    items.add(new Item(15, LocaleController.getString("SetEmojiStatus", R.string.SetEmojiStatus), R.drawable.msg_status_set));
+                }
+                items.add(null); // divider
             }
-            items.add(null); // divider
         }
-        items.add(new Item(2, LocaleController.getString("NewGroup", R.string.NewGroup), newGroupIcon));
+        if (ConfigManager.getBooleanOrDefault(Defines.showNewGroup, true)) {
+            items.add(new Item(2, LocaleController.getString("NewGroup", R.string.NewGroup), newGroupIcon));
+        }
         //items.add(new Item(3, LocaleController.getString("NewSecretChat", R.string.NewSecretChat), newSecretIcon));
         //items.add(new Item(4, LocaleController.getString("NewChannel", R.string.NewChannel), newChannelIcon));
-        items.add(new Item(6, LocaleController.getString("Contacts", R.string.Contacts), contactsIcon));
-        items.add(new Item(10, LocaleController.getString("Calls", R.string.Calls), callsIcon));
-        if (hasGps) {
+        if (ConfigManager.getBooleanOrDefault(Defines.showContacts, true)) {
+            items.add(new Item(6, LocaleController.getString("Contacts", R.string.Contacts), contactsIcon));
+        }
+        if (ConfigManager.getBooleanOrDefault(Defines.showCalls, true)) {
+            items.add(new Item(10, LocaleController.getString("Calls", R.string.Calls), callsIcon));
+        }
+        if (ConfigManager.getBooleanOrDefault(Defines.showPeopleNearby, true) && hasGps) {
             items.add(new Item(12, LocaleController.getString("PeopleNearby", R.string.PeopleNearby), peopleNearbyIcon));
         }
-        items.add(new Item(11, LocaleController.getString("SavedMessages", R.string.SavedMessages), savedIcon));
+        if (ConfigManager.getBooleanOrDefault(Defines.showSavedMessages, true)) {
+            items.add(new Item(11, LocaleController.getString("SavedMessages", R.string.SavedMessages), savedIcon));
+        }
         items.add(new Item(8, LocaleController.getString("Settings", R.string.Settings), settingsIcon));
-        items.add(null); // divider
-        items.add(new Item(7, LocaleController.getString("InviteFriends", R.string.InviteFriends), inviteIcon));
-        items.add(new Item(13, LocaleController.getString("TelegramFeatures", R.string.TelegramFeatures), helpIcon));
+//        items.add(null); // divider
+//        items.add(new Item(7, LocaleController.getString("InviteFriends", R.string.InviteFriends), inviteIcon));
+//        items.add(new Item(13, LocaleController.getString("TelegramFeatures", R.string.TelegramFeatures), helpIcon));
     }
 
     public int getId(int position) {

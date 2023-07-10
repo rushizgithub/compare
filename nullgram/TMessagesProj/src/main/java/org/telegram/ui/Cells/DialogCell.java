@@ -114,6 +114,8 @@ import java.util.Stack;
 
 import top.qwq2333.nullgram.config.ConfigManager;
 import top.qwq2333.nullgram.utils.Defines;
+import top.qwq2333.nullgram.utils.MessageUtils;
+import top.qwq2333.nullgram.utils.StringUtils;
 
 
 public class DialogCell extends BaseCell {
@@ -835,7 +837,7 @@ public class DialogCell extends BaseCell {
             }
             String title;
             if (currentChat != null) {
-                title = currentChat.title.replace('\n', ' ');
+                title = StringUtils.zalgoFilter(currentChat.title.replace('\n', ' '));
             } else if (currentUser != null) {
                 if (UserObject.isDeleted(currentUser)) {
                     title = LocaleController.getString("HiddenName", R.string.HiddenName);
@@ -1681,7 +1683,9 @@ public class DialogCell extends BaseCell {
                 }
             }
         }
-
+        if (ConfigManager.getBooleanOrFalse(Defines.filterZalgo) && topicIconInName == null) {
+            nameString = StringUtils.zalgoFilter(nameString);
+        }
         int timeWidth;
         if (drawTime) {
             timeWidth = (int) Math.ceil(Theme.dialogs_timePaint.measureText(timeString));
@@ -2598,6 +2602,17 @@ public class DialogCell extends BaseCell {
                         clearingDialog = MessagesController.getInstance(currentAccount).isClearingDialog(dialog.id);
                         groupMessages = MessagesController.getInstance(currentAccount).dialogMessage.get(dialog.id);
                         message = groupMessages != null && groupMessages.size() > 0 ? groupMessages.get(0) : null;
+
+                        if (message != null && ConfigManager.getBooleanOrFalse(Defines.ignoreBlockedUser)
+                            && MessagesController.getInstance(currentAccount).blockePeers.indexOfKey(message.getSenderId()) >= 0) {
+                            if (MessagesController.getInstance(currentAccount).dialogMessageFromUnblocked.get(dialog.id) != null) {
+                                message = MessagesController.getInstance(currentAccount).dialogMessageFromUnblocked.get(dialog.id);
+                            } else {
+                                message = MessageUtils.getInstance(currentAccount).getLastMessageFromUnblockUser(dialog.id);
+                                MessagesController.getInstance(currentAccount).dialogMessageFromUnblocked.put(dialog.id, message);
+                            }
+                        }
+
                         lastUnreadState = message != null && message.isUnread();
                         TLRPC.Chat localChat = MessagesController.getInstance(currentAccount).getChat(-dialog.id);
                         boolean isForumCell = localChat != null && localChat.forum && !isTopic;
@@ -4653,7 +4668,7 @@ public class DialogCell extends BaseCell {
             }
         } else if (captionMessage != null && captionMessage.caption != null) {
             MessageObject message = captionMessage;
-            CharSequence mess = message.caption.toString();
+            CharSequence mess = StringUtils.zalgoFilter(message.caption.toString());
             String emoji;
             if (!needEmoji) {
                 emoji = "";
