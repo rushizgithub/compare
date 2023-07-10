@@ -17,12 +17,13 @@ jobs:
       - name: Clone Repository
         run: |
          rm -rf *
-         git clone https://github.com/qwq233/Nullgram nullgram
+         git clone --depth 1 https://github.com/qwq233/Nullgram -b master nullgram
          cd nullgram && rm -rf .git && cd -
          ls nullgram
-         git clone https://github.com/PreviousAlone/Nnngram nnngram
+         git clone --depth 1 https://github.com/PreviousAlone/Nnngram -b main nnngram
          cd nnngram && rm -rf .git && cd -
          ls nnngram
+         cp -rf ./nnngram/. ./nullgram/
          rm -rf nnngram
          git config user.name "Your Name"
          git config user.email "your.email@example.com"
