@@ -60,12 +60,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.net.ssl.SSLException;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.helpers.WebSocketHelper;
-import top.qwq2333.nullgram.utils.DatabaseUtils;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.Log;
-import top.qwq2333.nullgram.utils.Utils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.helpers.WebSocketHelper;
+import xyz.nextalone.nnngram.utils.DatabaseUtils;
+import xyz.nextalone.nnngram.utils.Log;
+import xyz.nextalone.nnngram.utils.Utils;
 
 @SuppressWarnings("JavaJniMissingFunction")
 public class ConnectionsManager extends BaseController {
@@ -143,6 +142,18 @@ public class ConnectionsManager extends BaseController {
             this.forceTryIpV6 = forceTryIpV6;
             checkConnection();
         }
+    }
+
+    public void discardConnection(int dcId, int connectionType) {
+        Utilities.stageQueue.postRunnable(() -> {
+            native_discardConnection(currentAccount, dcId, connectionType);
+        });
+    }
+
+    public void failNotRunningRequest(int requestToken) {
+        Utilities.stageQueue.postRunnable(() -> {
+            native_failNotRunningRequest(currentAccount, requestToken);
+        });
     }
 
     private static class ResolvedDomain {
@@ -322,6 +333,15 @@ public class ConnectionsManager extends BaseController {
         if (BuildVars.LOGS_ENABLED) {
 //            FileLog.d("send request " + object + " with token = " + requestToken);
         }
+
+        if (Config.disableSendTyping && (object instanceof TLRPC.TL_messages_setTyping || object instanceof TLRPC.TL_messages_setEncryptedTyping)) {
+            return;
+        }
+
+        if (Config.storyStealthMode && (object instanceof TLRPC.TL_stories_readStories)) {
+            return;
+        }
+
         var user = getUserConfig().getCurrentUser();
         if (user != null && user.bot && DatabaseUtils.isUserOnlyMethod(object)) {
             FileLog.d("skip send request " + object + " user only method");
@@ -368,10 +388,10 @@ public class ConnectionsManager extends BaseController {
                         error = new TLRPC.TL_error();
                         error.code = errorCode;
                         error.text = errorText;
-                        if (BuildVars.LOGS_ENABLED) {
+                        if (BuildVars.LOGS_ENABLED && error.code != -2000) {
                             FileLog.e(object + " got error " + error.code + " " + error.text);
                         }
-                        if (ConfigManager.getBooleanOrFalse(Defines.showRPCError)) {
+                        if (Config.showRPCError) {
                             Utils.showErrorToast(object, errorText);
                         }
                     }
@@ -427,6 +447,9 @@ public class ConnectionsManager extends BaseController {
     }
 
     public void bindRequestToGuid(int requestToken, int guid) {
+        if (guid == 0) {
+            return;
+        }
         native_bindRequestToGuid(currentAccount, requestToken, guid);
     }
 
@@ -879,6 +902,8 @@ public class ConnectionsManager extends BaseController {
     public static native long native_checkProxy(int currentAccount, String address, int port, String username, String password, String secret, RequestTimeDelegate requestTimeDelegate);
 
     public static native void native_onHostNameResolved(String host, long address, String ip);
+    public static native void native_discardConnection(int currentAccount, int datacenterId, int connectionType);
+    public static native void native_failNotRunningRequest(int currentAccount, int token);
 
     public static int generateClassGuid() {
         return lastClassGuid++;

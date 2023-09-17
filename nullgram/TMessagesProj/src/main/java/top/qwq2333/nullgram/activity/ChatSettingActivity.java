@@ -39,8 +39,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
@@ -70,17 +68,15 @@ import org.telegram.ui.LaunchActivity;
 
 import java.util.ArrayList;
 
+import top.qwq2333.gen.Config;
 import top.qwq2333.nullgram.config.ConfigManager;
 import top.qwq2333.nullgram.helpers.EntitiesHelper;
 import top.qwq2333.nullgram.ui.PopupBuilder;
 import top.qwq2333.nullgram.ui.StickerSizePreviewMessagesCell;
-import top.qwq2333.nullgram.ui.sortList.ItemTouchHelperCallback;
-import top.qwq2333.nullgram.ui.sortList.SortListAdapter;
-import top.qwq2333.nullgram.ui.sortList.TextStyleListAdapter;
 import top.qwq2333.nullgram.utils.AlertUtil;
 import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.NumberUtils;
 import top.qwq2333.nullgram.utils.StringUtils;
+import top.qwq2333.nullgram.utils.UtilsKt;
 
 @SuppressLint("NotifyDataSetChanged")
 public class ChatSettingActivity extends BaseActivity {
@@ -97,7 +93,6 @@ public class ChatSettingActivity extends BaseActivity {
     private int hideGroupStickerRow;
     private int disablePremiumStickerRow;
     private int messageMenuRow;
-    private int textStyleSettingsRow;
     private int allowScreenshotOnNoForwardChatRow;
     private int labelChannelUserRow;
     private int displaySpoilerDirectlyRow;
@@ -106,7 +101,6 @@ public class ChatSettingActivity extends BaseActivity {
     private int disableTrendingStickerRow;
     private int disablePreviewVideoSoundShortcutRow;
     private int quickToggleAnonymous;
-    private int hideSendAsButtonRow;
     private int customDoubleClickTapRow;
     private int confirmToSendMediaMessagesRow;
     private int maxRecentStickerRow;
@@ -120,14 +114,6 @@ public class ChatSettingActivity extends BaseActivity {
     private int scrollableChatPreviewRow;
     private int showTabsOnForwardRow;
     private int disableStickersAutoReorderRow;
-    private int doNotUnarchiveBySwipeRow;
-    private int hideInputFieldBotButtonRow;
-    private int hideMessageSeenTooltipRow;
-    private int disableNotificationBubbleRow;
-    private int showOnlineStatusRow;
-    private int disablePhotoSideActionRow;
-    private int filterZalgoRow;
-    private int deleteMessageForBothRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -191,61 +177,58 @@ public class ChatSettingActivity extends BaseActivity {
     @Override
     protected void onItemClick(View view, int position, float x, float y) {
         if (position == ignoreBlockedUserMessagesRow) {
-            ConfigManager.toggleBoolean(Defines.ignoreBlockedUser);
+            Config.toggleIgnoreBlockedUser();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.ignoreBlockedUser));
+                ((TextCheckCell) view).setChecked(Config.ignoreBlockedUser);
             }
         } else if (position == hideGroupStickerRow) {
-            ConfigManager.toggleBoolean(Defines.hideGroupSticker);
+            Config.toggleHideGroupSticker();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.hideGroupSticker));
+                ((TextCheckCell) view).setChecked(Config.hideGroupSticker);
             }
         } else if (position == disablePremiumStickerRow) {
-            ConfigManager.toggleBoolean(Defines.disablePremiumSticker);
+            Config.toggleDisablePremiumSticker();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.disablePremiumSticker));
+                ((TextCheckCell) view).setChecked(Config.disablePremiumSticker);
             }
         } else if (position == messageMenuRow) {
             showMessageMenuAlert();
-        } else if (position == textStyleSettingsRow) {
-            showTextStyleSettingsAlert();
         } else if (position == allowScreenshotOnNoForwardChatRow) {
-            ConfigManager.toggleBoolean(Defines.allowScreenshotOnNoForwardChat);
+            Config.toggleAllowScreenshotOnNoForwardChat();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.allowScreenshotOnNoForwardChat));
+                ((TextCheckCell) view).setChecked(Config.allowScreenshotOnNoForwardChat);
             }
         } else if (position == labelChannelUserRow) {
-            if (!ConfigManager.getBooleanOrFalse(Defines.channelAlias)) {
-                ConfigManager.toggleBoolean(Defines.labelChannelUser);
+            if (!Config.channelAlias) {
+                Config.toggleLabelChannelUser();
                 if (view instanceof TextCheckCell) {
-                    ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.labelChannelUser));
+                    ((TextCheckCell) view).setChecked(Config.labelChannelUser);
                 }
             } else {
                 AndroidUtilities.shakeView(view);
                 AlertUtil.showToast(LocaleController.getString("notAllowedWhenChannelAliasIsEnabled", R.string.notAllowedWhenChannelAliasIsEnabled));
             }
         } else if (position == displaySpoilerDirectlyRow) {
-            ConfigManager.toggleBoolean(Defines.displaySpoilerMsgDirectly);
+            Config.toggleDisplaySpoilerMsgDirectly();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.displaySpoilerMsgDirectly));
+                ((TextCheckCell) view).setChecked(Config.displaySpoilerMsgDirectly);
             }
         } else if (position == disableJumpToNextChannelRow) {
-            ConfigManager.toggleBoolean(Defines.disableJumpToNextChannel);
+            Config.toggleDisableJumpToNextChannel();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.disableJumpToNextChannel));
+                ((TextCheckCell) view).setChecked(Config.disableJumpToNextChannel);
             }
         } else if (position == disableGreetingStickerRow) {
-            ConfigManager.toggleBoolean(Defines.disableGreetingSticker);
+            Config.toggleDisableGreetingSticker();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.disableGreetingSticker));
+                ((TextCheckCell) view).setChecked(Config.disableGreetingSticker);
             }
         } else if (position == disableTrendingStickerRow) {
-            ConfigManager.toggleBoolean(Defines.disableTrendingSticker);
+            Config.toggleDisableTrendingSticker();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.disableTrendingSticker));
+                ((TextCheckCell) view).setChecked(Config.disableTrendingSticker);
             }
         } else if (position == customDoubleClickTapRow) {
-            final int currentConfig = ConfigManager.getIntOrDefault(Defines.doubleTab, Defines.doubleTabReaction);
             ArrayList<String> arrayList = new ArrayList<>();
             ArrayList<Integer> types = new ArrayList<>();
             arrayList.add(LocaleController.getString("Disable", R.string.Disable));
@@ -260,83 +243,78 @@ public class ChatSettingActivity extends BaseActivity {
             types.add(Defines.doubleTabSaveMessages);
             arrayList.add(LocaleController.getString("Repeat", R.string.Repeat));
             types.add(Defines.doubleTabRepeat);
-            arrayList.add(LocaleController.getString("RepeatAsCopy", R.string.RepeatAsCopy));
-            types.add(Defines.doubleTabRepeatAsCopy);
-            arrayList.add(LocaleController.getString("Reverse", R.string.Reverse));
-            types.add(Defines.doubleTabReverse);
             arrayList.add(LocaleController.getString("TranslateMessage", R.string.TranslateMessage));
             types.add(Defines.doubleTabTranslate);
-            PopupBuilder.show(arrayList, LocaleController.getString("customDoubleTap", R.string.customDoubleTap), types.indexOf(ConfigManager.getIntOrDefault(Defines.doubleTab,
-                Defines.doubleTabReaction)), getParentActivity(), view, i -> {
-                ConfigManager.putInt(Defines.doubleTab, types.get(i));
+            PopupBuilder.show(arrayList, LocaleController.getString("customDoubleTap", R.string.customDoubleTap), types.indexOf(Config.doubleTab), getParentActivity(), view, i -> {
+                Config.setDoubleTab(types.get(i));
                 listAdapter.notifyItemChanged(customDoubleClickTapRow, PARTIAL);
                 getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
             });
         } else if (position == confirmToSendMediaMessagesRow) {
-            ConfigManager.toggleBoolean(Defines.confirmToSendMediaMessages);
+            Config.toggleConfirmToSendMediaMessages();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.confirmToSendMediaMessages));
+                ((TextCheckCell) view).setChecked(Config.confirmToSendMediaMessages);
             }
         } else if (position == maxRecentStickerRow) {
             setMaxRecentSticker(view, position);
             listAdapter.notifyItemChanged(position, PARTIAL);
         } else if (position == unreadBadgeOnBackButtonRow) {
-            ConfigManager.toggleBoolean(Defines.unreadBadgeOnBackButton);
+            Config.toggleUnreadBadgeOnBackButton();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.unreadBadgeOnBackButton));
+                ((TextCheckCell) view).setChecked(Config.unreadBadgeOnBackButton);
             }
         } else if (position == ignoreReactionMentionRow) {
-            ConfigManager.toggleBoolean(Defines.ignoreReactionMention);
+            Config.toggleIgnoreReactionMention();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.ignoreReactionMention));
+                ((TextCheckCell) view).setChecked(Config.ignoreReactionMention);
             }
         } else if (position == showForwardDateRow) {
-            ConfigManager.toggleBoolean(Defines.dateOfForwardedMsg);
+            Config.toggleDateOfForwardedMsg();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.dateOfForwardedMsg));
+                ((TextCheckCell) view).setChecked(Config.dateOfForwardedMsg);
             }
         } else if (position == hideTimeForStickerRow) {
-            ConfigManager.toggleBoolean(Defines.hideTimeForSticker);
+            Config.toggleHideTimeForSticker();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.hideTimeForSticker));
+                ((TextCheckCell) view).setChecked(Config.hideTimeForSticker);
             }
         } else if (position == showMessageIDRow) {
-            ConfigManager.toggleBoolean(Defines.showMessageID);
+            Config.toggleShowMessageID();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.showMessageID));
+                ((TextCheckCell) view).setChecked(Config.showMessageID);
             }
         } else if (position == hideQuickSendMediaBottomRow) {
-            ConfigManager.toggleBoolean(Defines.hideQuickSendMediaBottom);
+            Config.toggleHideQuickSendMediaBottom();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom));
+                ((TextCheckCell) view).setChecked(Config.hideQuickSendMediaBottom);
             }
         } else if (position == customQuickMessageRow) {
             setCustomQuickMessage();
             listAdapter.notifyItemChanged(position, PARTIAL);
         } else if (position == scrollableChatPreviewRow) {
-            ConfigManager.toggleBoolean(Defines.scrollableChatPreview);
+            Config.toggleScrollableChatPreview();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.scrollableChatPreview));
+                ((TextCheckCell) view).setChecked(Config.scrollableChatPreview);
             }
         } else if (position == showTabsOnForwardRow) {
-            ConfigManager.toggleBoolean(Defines.showTabsOnForward);
+            Config.toggleShowTabsOnForward();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.showTabsOnForward));
+                ((TextCheckCell) view).setChecked(Config.showTabsOnForward);
             }
         } else if (position == disableStickersAutoReorderRow) {
-            ConfigManager.putBoolean(Defines.disableStickersAutoReorder, !ConfigManager.getBooleanOrDefault(Defines.disableStickersAutoReorder, true));
+            Config.toggleDisableStickersAutoReorder();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.disableStickersAutoReorder));
+                ((TextCheckCell) view).setChecked(Config.disableStickersAutoReorder);
             }
         } else if (position == disablePreviewVideoSoundShortcutRow) {
-            ConfigManager.toggleBoolean(Defines.disablePreviewVideoSoundShortcut);
+            Config.toggleDisablePreviewVideoSoundShortcut();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.disablePreviewVideoSoundShortcut));
+                ((TextCheckCell) view).setChecked(Config.disablePreviewVideoSoundShortcut);
             }
         } else if (position == quickToggleAnonymous) {
-            ConfigManager.toggleBoolean(Defines.quickToggleAnonymous);
+            Config.toggleQuickToggleAnonymous();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.quickToggleAnonymous));
+                ((TextCheckCell) view).setChecked(Config.quickToggleAnonymous);
             }
 
             AlertDialog restart = new AlertDialog(getContext(), 0);
@@ -346,20 +324,15 @@ public class ChatSettingActivity extends BaseActivity {
                 ProcessPhoenix.triggerRebirth(getContext(), new Intent(getContext(), LaunchActivity.class));
             });
             restart.show();
-        } else if (position == hideSendAsButtonRow) {
-            ConfigManager.toggleBoolean(Defines.hideSendAsButton);
-            if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.hideSendAsButton));
-            }
         } else if (position == markdownParserRow) {
             ArrayList<String> arrayList = new ArrayList<>();
-            arrayList.add("Nnngram");
+            arrayList.add("Nullgram");
             arrayList.add("Telegram");
-            boolean oldParser = ConfigManager.getBooleanOrDefault(Defines.newMarkdownParser, true);
-            PopupBuilder.show(arrayList, LocaleController.getString("MarkdownParser", R.string.MarkdownParser), ConfigManager.getBooleanOrDefault(Defines.newMarkdownParser, true) ? 0 : 1, getParentActivity(), view, i -> {
-                ConfigManager.putBoolean(Defines.newMarkdownParser, (i == 0));
+            boolean oldParser = Config.newMarkdownParser;
+            PopupBuilder.show(arrayList, LocaleController.getString("MarkdownParser", R.string.MarkdownParser), Config.newMarkdownParser ? 0 : 1, getParentActivity(), view, i -> {
+                Config.setNewMarkdownParser(i == 0);
                 listAdapter.notifyItemChanged(markdownParserRow, PARTIAL);
-                if (oldParser != ConfigManager.getBooleanOrDefault(Defines.newMarkdownParser, true)) {
+                if (oldParser != Config.newMarkdownParser) {
                     if (oldParser) {
                         listAdapter.notifyItemRemoved(markdownParseLinksRow);
                         updateRows();
@@ -371,57 +344,18 @@ public class ChatSettingActivity extends BaseActivity {
                 }
             });
         } else if (position == markdownParseLinksRow) {
-            ConfigManager.putBoolean(Defines.markdownParseLinks, !ConfigManager.getBooleanOrDefault(Defines.markdownParseLinks, true));
+            Config.toggleMarkdownParseLinks();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrDefault(Defines.markdownParseLinks, true));
+                ((TextCheckCell) view).setChecked(Config.markdownParseLinks);
             }
             listAdapter.notifyItemChanged(markdown2Row);
         } else if (position == markdownDisableRow) {
-            ConfigManager.toggleBoolean(Defines.markdownDisabled);
+            Config.toggleShowBotAPIID();
             if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.markdownDisabled));
-            }
-        } else if (position == doNotUnarchiveBySwipeRow) {
-            ConfigManager.toggleBoolean(Defines.doNotUnarchiveBySwipe);
-            if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.doNotUnarchiveBySwipe));
-            }
-        } else if (position == hideInputFieldBotButtonRow) {
-            ConfigManager.toggleBoolean(Defines.hideInputFieldBotButton);
-            if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.hideInputFieldBotButton));
-            }
-        } else if (position == hideMessageSeenTooltipRow) {
-            ConfigManager.toggleBoolean(Defines.hideMessageSeenTooltip);
-            if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.hideMessageSeenTooltip));
-            }
-        } else if (position == disableNotificationBubbleRow) {
-            ConfigManager.toggleBoolean(Defines.disableNotificationBubble);
-            if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.disableNotificationBubble));
-            }
-        } else if (position == showOnlineStatusRow) {
-            ConfigManager.toggleBoolean(Defines.showOnlineStatus);
-            if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.showOnlineStatus));
-            }
-        } else if (position == disablePhotoSideActionRow) {
-            ConfigManager.toggleBoolean(Defines.disablePhotoSideAction);
-            if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.disablePhotoSideAction));
-            }
-        } else if (position == filterZalgoRow) {
-            ConfigManager.toggleBoolean(Defines.filterZalgo);
-            if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.filterZalgo));
-            }
-        } else if (position == deleteMessageForBothRow) {
-            ConfigManager.toggleBoolean(Defines.deleteMessageForBoth);
-            if (view instanceof TextCheckCell) {
-                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.deleteMessageForBoth));
+                ((TextCheckCell) view).setChecked(Config.alwaysSendWithoutSound);
             }
         }
+
     }
 
     @Override
@@ -448,8 +382,7 @@ public class ChatSettingActivity extends BaseActivity {
         hideGroupStickerRow = addRow("hideGroupSticker");
         disablePremiumStickerRow = addRow("disablePremiumSticker");
         messageMenuRow = addRow();
-        textStyleSettingsRow = addRow("textStyleSettings");
-        if (ConfigManager.getBooleanOrFalse(Defines.showHiddenSettings)) {
+        if (Config.showHiddenSettings) {
             allowScreenshotOnNoForwardChatRow = addRow("allowScreenshotOnNoForwardChat");
         }
         labelChannelUserRow = addRow("labelChannelUser");
@@ -467,25 +400,16 @@ public class ChatSettingActivity extends BaseActivity {
         hideTimeForStickerRow = addRow("hideTimeForSticker");
         showMessageIDRow = addRow("showMessageID");
         quickToggleAnonymous = addRow("quickToggleAnonymous");
-        hideSendAsButtonRow = addRow("hideSendAsButton");
         hideQuickSendMediaBottomRow = addRow("hideQuickSendMediaBottom");
         customQuickMessageRow = addRow("customQuickMessage");
         scrollableChatPreviewRow = addRow("scrollableChatPreview");
         showTabsOnForwardRow = addRow("showTabsOnForward");
         disableStickersAutoReorderRow = addRow("disableStickersAutoReorder");
-        doNotUnarchiveBySwipeRow = addRow("doNotUnarchiveBySwipe");
-        hideInputFieldBotButtonRow = addRow("hideInputFieldBotButton");
-        hideMessageSeenTooltipRow = addRow("hideMessageSeenTooltip");
-        disableNotificationBubbleRow = addRow("disableNotificationBubble");
-        showOnlineStatusRow = addRow("showOnlineStatus");
-        disablePhotoSideActionRow = addRow("disablePhotoSideAction");
-        filterZalgoRow = addRow("filterZalgo");
-        deleteMessageForBothRow = addRow("deleteMessageForBoth");
         chat2Row = addRow();
         markdownRow = addRow();
         markdownDisableRow = addRow("markdownDisabled");
         markdownParserRow = addRow("markdownParser");
-        markdownParseLinksRow = ConfigManager.getBooleanOrFalse(Defines.newMarkdownParser) ? addRow("markdownParseLinks") : -1;
+        markdownParseLinksRow = Config.newMarkdownParser ? addRow("markdownParseLinks") : -1;
         markdown2Row = addRow();
 
         if (listAdapter != null) {
@@ -522,13 +446,12 @@ public class ChatSettingActivity extends BaseActivity {
                             String.valueOf(Math.round(ConfigManager.getFloatOrDefault(Defines.stickerSize, 14.0f))), payload, true);
                     } else if (position == messageMenuRow) {
                         textCell.setText(LocaleController.getString("MessageMenu", R.string.MessageMenu), false);
-                    } else if (position == textStyleSettingsRow) {
-                        textCell.setText(LocaleController.getString("TextStyleSettings", R.string.TextStyleSettings), false);
                     } else if (position == maxRecentStickerRow) {
-                        textCell.setTextAndValue(LocaleController.getString("maxRecentSticker", R.string.maxRecentSticker), String.valueOf(ConfigManager.getIntOrDefault(Defines.maxRecentSticker, 30)), payload, true);
+                        textCell.setTextAndValue(LocaleController.getString("maxRecentSticker", R.string.maxRecentSticker), String.valueOf(Config.maxRecentSticker), payload, true);
+
                     } else if (position == customDoubleClickTapRow) {
                         String value;
-                        switch (ConfigManager.getIntOrDefault(Defines.doubleTab, Defines.doubleTabReaction)) {
+                        switch (Config.doubleTab) {
                             case Defines.doubleTabNone:
                                 value = LocaleController.getString("Disable", R.string.Disable);
                                 break;
@@ -547,12 +470,6 @@ public class ChatSettingActivity extends BaseActivity {
                             case Defines.doubleTabRepeat:
                                 value = LocaleController.getString("Repeat", R.string.Repeat);
                                 break;
-                            case Defines.doubleTabRepeatAsCopy:
-                                value = LocaleController.getString("RepeatAsCopy", R.string.RepeatAsCopy);
-                                break;
-                            case Defines.doubleTabReverse:
-                                value = LocaleController.getString("Reverse", R.string.Reverse);
-                                break;
                             case Defines.doubleTabTranslate:
                                 value = LocaleController.getString("TranslateMessage", R.string.TranslateMessage);
                                 break;
@@ -563,8 +480,7 @@ public class ChatSettingActivity extends BaseActivity {
                     } else if (position == customQuickMessageRow) {
                         textCell.setText(LocaleController.getString("setCustomQuickMessage", R.string.setCustomQuickMessage), true);
                     } else if (position == markdownParserRow) {
-                        textCell.setTextAndValue(LocaleController.getString("MarkdownParser", R.string.MarkdownParser),
-                            ConfigManager.getBooleanOrDefault(Defines.newMarkdownParser, true) ? "Nnngram" : "Telegram", payload, position + 1 != markdown2Row);
+                        textCell.setTextAndValue(LocaleController.getString("MarkdownParser", R.string.MarkdownParser), Config.newMarkdownParser ? "Nullgram" : "Telegram", payload, position + 1 != markdown2Row);
                     }
                     break;
                 }
@@ -572,83 +488,56 @@ public class ChatSettingActivity extends BaseActivity {
                     TextCheckCell textCell = (TextCheckCell) holder.itemView;
                     textCell.setEnabled(true, null);
                     if (position == ignoreBlockedUserMessagesRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("ignoreBlockedUser", R.string.ignoreBlockedUser), ConfigManager.getBooleanOrFalse(Defines.ignoreBlockedUser), true);
+                        textCell.setTextAndCheck(LocaleController.getString("ignoreBlockedUser", R.string.ignoreBlockedUser), Config.ignoreBlockedUser, true);
                     } else if (position == hideGroupStickerRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("hideGroupSticker", R.string.hideGroupSticker), ConfigManager.getBooleanOrFalse(Defines.hideGroupSticker), true);
+                        textCell.setTextAndCheck(LocaleController.getString("hideGroupSticker", R.string.hideGroupSticker), Config.hideGroupSticker, true);
                     } else if (position == disablePremiumStickerRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("disablePremiumSticker", R.string.disablePremiumSticker), ConfigManager.getBooleanOrFalse(Defines.disablePremiumSticker), true);
+                        textCell.setTextAndCheck(LocaleController.getString("disablePremiumSticker", R.string.disablePremiumSticker), Config.disablePremiumSticker, true);
                     } else if (position == allowScreenshotOnNoForwardChatRow) {
-                        textCell.setTextAndValueAndCheck(LocaleController.getString("allowScreenshotOnNoForwardChat", R.string.allowScreenshotOnNoForwardChat), LocaleController.getString("allowScreenshotOnNoForwardChatWarning", R.string.allowScreenshotOnNoForwardChatWarning), ConfigManager.getBooleanOrFalse(Defines.allowScreenshotOnNoForwardChat), true, true);
+                        textCell.setTextAndValueAndCheck(LocaleController.getString("allowScreenshotOnNoForwardChat", R.string.allowScreenshotOnNoForwardChat), LocaleController.getString("allowScreenshotOnNoForwardChatWarning", R.string.allowScreenshotOnNoForwardChatWarning), Config.allowScreenshotOnNoForwardChat, true, true);
                     } else if (position == labelChannelUserRow) {
-                        if (ConfigManager.getBooleanOrFalse(Defines.channelAlias)) {
+                        if (Config.channelAlias) {
                             textCell.setEnabled(false, null);
                         }
-                        textCell.setTextAndValueAndCheck(LocaleController.getString("labelChannelUser", R.string.labelChannelUser), LocaleController.getString("labelChannelUser", R.string.labelChannelUserDetails), ConfigManager.getBooleanOrFalse(Defines.labelChannelUser), true, true);
+                        textCell.setTextAndValueAndCheck(LocaleController.getString("labelChannelUser", R.string.labelChannelUser), LocaleController.getString("labelChannelUser", R.string.labelChannelUserDetails), Config.labelChannelUser, true, true);
                     } else if (position == displaySpoilerDirectlyRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("displaySpoilerDirectly", R.string.displaySpoilerDirectly), ConfigManager.getBooleanOrFalse(Defines.displaySpoilerMsgDirectly), true);
+                        textCell.setTextAndCheck(LocaleController.getString("displaySpoilerDirectly", R.string.displaySpoilerDirectly), Config.displaySpoilerMsgDirectly, true);
                     } else if (position == disableJumpToNextChannelRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("disableJumpToNextChannel", R.string.disableJumpToNextChannel), ConfigManager.getBooleanOrFalse(Defines.disableJumpToNextChannel), true);
+                        textCell.setTextAndCheck(LocaleController.getString("disableJumpToNextChannel", R.string.disableJumpToNextChannel), Config.disableJumpToNextChannel, true);
                     } else if (position == disableGreetingStickerRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("disableGreetingSticker", R.string.disableGreetingSticker), ConfigManager.getBooleanOrFalse(Defines.disableGreetingSticker), true);
+                        textCell.setTextAndCheck(LocaleController.getString("disableGreetingSticker", R.string.disableGreetingSticker), Config.disableGreetingSticker, true);
                     } else if (position == disableTrendingStickerRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("disableTrendingSticker", R.string.disableTrendingSticker), ConfigManager.getBooleanOrFalse(Defines.disableTrendingSticker), true);
+                        textCell.setTextAndCheck(LocaleController.getString("disableTrendingSticker", R.string.disableTrendingSticker), Config.disableTrendingSticker, true);
                     } else if (position == confirmToSendMediaMessagesRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("confirmToSendMediaMessages", R.string.confirmToSendMediaMessages), ConfigManager.getBooleanOrFalse(Defines.confirmToSendMediaMessages), true);
+                        textCell.setTextAndCheck(LocaleController.getString("confirmToSendMediaMessages", R.string.confirmToSendMediaMessages), Config.confirmToSendMediaMessages, true);
                     } else if (position == unreadBadgeOnBackButtonRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("unreadBadgeOnBackButton", R.string.unreadBadgeOnBackButton), ConfigManager.getBooleanOrFalse(Defines.unreadBadgeOnBackButton), true);
+                        textCell.setTextAndCheck(LocaleController.getString("unreadBadgeOnBackButton", R.string.unreadBadgeOnBackButton), Config.unreadBadgeOnBackButton, true);
                     } else if (position == ignoreReactionMentionRow) {
-                        textCell.setTextAndValueAndCheck(LocaleController.getString("ignoreReactionMention", R.string.ignoreReactionMention), LocaleController.getString("ignoreReactionMentionInfo", R.string.ignoreReactionMentionInfo), ConfigManager.getBooleanOrFalse(Defines.ignoreReactionMention), true, true);
+                        textCell.setTextAndValueAndCheck(LocaleController.getString("ignoreReactionMention", R.string.ignoreReactionMention), LocaleController.getString("ignoreReactionMentionInfo", R.string.ignoreReactionMentionInfo), Config.ignoreReactionMention, true, true);
                     } else if (position == showForwardDateRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("showForwardDate", R.string.showForwardDate), ConfigManager.getBooleanOrFalse(Defines.dateOfForwardedMsg), true);
+                        textCell.setTextAndCheck(LocaleController.getString("showForwardDate", R.string.showForwardDate), Config.dateOfForwardedMsg, true);
                     } else if (position == hideTimeForStickerRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("showForwardName", R.string.hideTimeForSticker), ConfigManager.getBooleanOrFalse(Defines.hideTimeForSticker), true);
+                        textCell.setTextAndCheck(LocaleController.getString("showForwardName", R.string.hideTimeForSticker), Config.hideTimeForSticker, true);
                     } else if (position == showMessageIDRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("showMessageID", R.string.showMessageID), ConfigManager.getBooleanOrFalse(Defines.showMessageID), true);
+                        textCell.setTextAndCheck(LocaleController.getString("showMessageID", R.string.showMessageID), Config.showMessageID, true);
                     } else if (position == hideQuickSendMediaBottomRow) {
                         textCell.setTextAndCheck(LocaleController.getString("DisableQuickSendMediaBottom", R.string.DisableQuickSendMediaBottom),
-                            ConfigManager.getBooleanOrFalse(Defines.hideQuickSendMediaBottom), true);
+                            Config.hideQuickSendMediaBottom, true);
                     } else if (position == scrollableChatPreviewRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("scrollableChatPreview", R.string.scrollableChatPreview), ConfigManager.getBooleanOrFalse(Defines.scrollableChatPreview), true);
+                        textCell.setTextAndCheck(LocaleController.getString("scrollableChatPreview", R.string.scrollableChatPreview), Config.scrollableChatPreview, true);
                     } else if (position == showTabsOnForwardRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("showTabsOnForward", R.string.showTabsOnForward), ConfigManager.getBooleanOrFalse(Defines.showTabsOnForward), true);
+                        textCell.setTextAndCheck(LocaleController.getString("showTabsOnForward", R.string.showTabsOnForward), Config.showTabsOnForward, true);
                     } else if (position == disablePreviewVideoSoundShortcutRow) {
-                        textCell.setTextAndValueAndCheck(LocaleController.getString("disablePreviewVideoSoundShortcut", R.string.disablePreviewVideoSoundShortcut), LocaleController.getString("disablePreviewVideoSoundShortcutNotice", R.string.disablePreviewVideoSoundShortcutNotice), ConfigManager.getBooleanOrFalse(Defines.disablePreviewVideoSoundShortcut), true, true);
+                        textCell.setTextAndValueAndCheck(LocaleController.getString("disablePreviewVideoSoundShortcut", R.string.disablePreviewVideoSoundShortcut), LocaleController.getString("disablePreviewVideoSoundShortcutNotice", R.string.disablePreviewVideoSoundShortcutNotice), Config.disablePreviewVideoSoundShortcut, true, true);
                     } else if (position == quickToggleAnonymous) {
-                        textCell.setTextAndValueAndCheck(LocaleController.getString("quickToggleAnonymous", R.string.quickToggleAnonymous), LocaleController.getString("quickToggleAnonymousNotice", R.string.quickToggleAnonymousNotice), ConfigManager.getBooleanOrFalse(Defines.quickToggleAnonymous), true, true);
-                    } else if (position == hideSendAsButtonRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("hideSendAsButton", R.string.hideSendAsButton),  ConfigManager.getBooleanOrFalse(Defines.hideSendAsButton),
-                            true);
+                        textCell.setTextAndValueAndCheck(LocaleController.getString("quickToggleAnonymous", R.string.quickToggleAnonymous), LocaleController.getString("quickToggleAnonymousNotice", R.string.quickToggleAnonymousNotice), Config.quickToggleAnonymous, true, true);
                     } else if (position == disableStickersAutoReorderRow) {
                         textCell.setTextAndCheck(LocaleController.getString("disableStickersAutoReorder", R.string.disableStickersAutoReorder),
-                            ConfigManager.getBooleanOrDefault(Defines.disableStickersAutoReorder, true), true);
+                            Config.disableStickersAutoReorder, true);
                     } else if (position == markdownParseLinksRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("MarkdownParseLinks", R.string.MarkdownParseLinks), ConfigManager.getBooleanOrDefault(Defines.markdownParseLinks, true), false);
+                        textCell.setTextAndCheck(LocaleController.getString("MarkdownParseLinks", R.string.MarkdownParseLinks), Config.markdownParseLinks, false);
                     } else if (position == markdownDisableRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("MarkdownDisableByDefault", R.string.MarkdownDisableByDefault), ConfigManager.getBooleanOrFalse(Defines.markdownDisabled), true);
-                    } else if (position == doNotUnarchiveBySwipeRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("doNotUnarchiveBySwipe", R.string.doNotUnarchiveBySwipe),
-                            ConfigManager.getBooleanOrFalse(Defines.doNotUnarchiveBySwipe), true);
-                    } else if (position == hideInputFieldBotButtonRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("hideInputFieldBotButton", R.string.hideInputFieldBotButton),
-                            ConfigManager.getBooleanOrFalse(Defines.hideInputFieldBotButton), true);
-                    } else if (position == hideMessageSeenTooltipRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("hideMessageSeenTooltip", R.string.hideMessageSeenTooltip),
-                            ConfigManager.getBooleanOrFalse(Defines.hideMessageSeenTooltip), true);
-                    } else if (position == disableNotificationBubbleRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("disableNotificationBubble", R.string.disableNotificationBubble),
-                            ConfigManager.getBooleanOrFalse(Defines.disableNotificationBubble), false);
-                    } else if (position == showOnlineStatusRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("showOnlineStatus", R.string.showOnlineStatus),
-                            ConfigManager.getBooleanOrFalse(Defines.showOnlineStatus), true);
-                    } else if (position == disablePhotoSideActionRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("disablePhotoSideAction", R.string.disablePhotoSideAction),
-                            ConfigManager.getBooleanOrFalse(Defines.disablePhotoSideAction), true);
-                    } else if (position == filterZalgoRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("filterZalgo", R.string.filterZalgo),
-                            ConfigManager.getBooleanOrFalse(Defines.filterZalgo), true);
-                    } else if (position == deleteMessageForBothRow) {
-                        textCell.setTextAndCheck(LocaleController.getString("deleteMessageForBoth", R.string.deleteMessageForBoth),
-                            ConfigManager.getBooleanOrFalse(Defines.deleteMessageForBoth), true);
+                        textCell.setTextAndCheck(LocaleController.getString("MarkdownDisableByDefault", R.string.MarkdownDisableByDefault), Config.alwaysSendWithoutSound, true);
                     }
                     break;
                 }
@@ -672,7 +561,8 @@ public class ChatSettingActivity extends BaseActivity {
                     if (position == markdown2Row) {
                         cell.getTextView().setMovementMethod(null);
                         cell.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
-                        cell.setText(TextUtils.expandTemplate(EntitiesHelper.parseMarkdown(ConfigManager.getBooleanOrDefault(Defines.newMarkdownParser, true) && ConfigManager.getBooleanOrDefault(Defines.markdownParseLinks, true) ? LocaleController.getString("MarkdownAbout", R.string.MarkdownAbout) : LocaleController.getString("MarkdownAbout2", R.string.MarkdownAbout2)), "**", "__", "~~", "`", "||", "[", "](", ")"));
+                        cell.setText(TextUtils.expandTemplate(EntitiesHelper.parseMarkdown(Config.newMarkdownParser && Config.markdownParseLinks ?
+                                LocaleController.getString("MarkdownAbout", R.string.MarkdownAbout) : LocaleController.getString("MarkdownAbout2", R.string.MarkdownAbout2)), "**", "__", "~~", "`", "||", "[", "](", ")"));
                     }
                     break;
                 }
@@ -731,7 +621,7 @@ public class ChatSettingActivity extends BaseActivity {
         public int getItemViewType(int position) {
             if (position == chat2Row || position == stickerSize2Row) {
                 return TYPE_SHADOW;
-            } else if (position == messageMenuRow || position == customDoubleClickTapRow || position == maxRecentStickerRow || position == customQuickMessageRow || position == markdownParserRow || position == textStyleSettingsRow) {
+            } else if (position == messageMenuRow || position == customDoubleClickTapRow || position == maxRecentStickerRow || position == customQuickMessageRow || position == markdownParserRow) {
                 return TYPE_SETTINGS;
             } else if (position == chatRow || position == stickerSizeHeaderRow || position == markdownRow) {
                 return TYPE_HEADER;
@@ -761,7 +651,7 @@ public class ChatSettingActivity extends BaseActivity {
         linearLayoutInviteContainer.setOrientation(LinearLayout.VERTICAL);
         linearLayout.addView(linearLayoutInviteContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
-        int count = 9 + 2;
+        int count = 7;
         for (int a = 0; a < count; a++) {
             TextCheckCell textCell = new TextCheckCell(context);
             switch (a) {
@@ -770,43 +660,28 @@ public class ChatSettingActivity extends BaseActivity {
                     break;
                 }
                 case 1: {
-                    textCell.setTextAndCheck(LocaleController.getString("NoQuoteForward", R.string.NoQuoteForward), ConfigManager.getBooleanOrDefault(Defines.showNoQuoteForward, true), false);
+                    textCell.setTextAndCheck(LocaleController.getString("NoQuoteForward", R.string.NoQuoteForward), Config.showNoQuoteForward, false);
                     break;
                 }
                 case 2: {
-                    textCell.setTextAndCheck(LocaleController.getString("saveMessages", R.string.saveMessages), ConfigManager.getBooleanOrFalse(Defines.showSaveMessages), false);
+                    textCell.setTextAndCheck(LocaleController.getString("saveMessages", R.string.saveMessages), Config.showSaveMessages, false);
                     break;
                 }
                 case 3: {
-                    textCell.setTextAndCheck(LocaleController.getString("Repeat", R.string.Repeat), ConfigManager.getBooleanOrDefault(Defines.showRepeat, true), false);
+                    textCell.setTextAndCheck(LocaleController.getString("Repeat", R.string.Repeat), Config.showRepeat, false);
                     break;
                 }
                 case 4: {
-                    textCell.setTextAndCheck(LocaleController.getString("RepeatAsCopy", R.string.RepeatAsCopy), ConfigManager.getBooleanOrFalse(Defines.showRepeatAsCopy), false);
+                    textCell.setTextAndCheck(LocaleController.getString("ViewHistory", R.string.ViewHistory), Config.showViewHistory, false);
                     break;
                 }
-                case 4 + 1: {
-                    textCell.setTextAndCheck(LocaleController.getString("Reverse", R.string.Reverse), ConfigManager.getBooleanOrFalse(Defines.showReverse), false);
+                case 5: {
+                    textCell.setTextAndCheck(LocaleController.getString("MessageDetails", R.string.MessageDetails), Config.showMessagesDetail, false);
                     break;
                 }
-                case 4 + 1 + 1: {
-                    textCell.setTextAndCheck(LocaleController.getString("ViewHistory", R.string.ViewHistory), ConfigManager.getBooleanOrFalse(Defines.showViewHistory), false);
+                case 6: {
+                    textCell.setTextAndCheck(LocaleController.getString("CopyPhoto", R.string.CopyPhoto), Config.showCopyPhoto, false);
                     break;
-                }
-                case 5+ 1 + 1: {
-                    textCell.setTextAndCheck(LocaleController.getString("MessageDetails", R.string.MessageDetails), ConfigManager.getBooleanOrFalse(Defines.showMessagesDetail), false);
-                    break;
-                }
-                case 6+ 1 + 1: {
-                    textCell.setTextAndCheck(LocaleController.getString("CopyPhoto", R.string.CopyPhoto), ConfigManager.getBooleanOrFalse(Defines.showCopyPhoto), false);
-                    break;
-                }
-                case 7+ 1 + 1: {
-                    textCell.setTextAndCheck(LocaleController.getString("Reactions", R.string.Reactions), ConfigManager.getBooleanOrDefault(Defines.showReactions, true), false);
-                    break;
-                }
-                case 8+ 1 + 1: {
-                    textCell.setTextAndCheck(LocaleController.getString("ReportChat", R.string.ReportChat), ConfigManager.getBooleanOrFalse(Defines.showReport), false);
                 }
             }
             textCell.setTag(a);
@@ -816,58 +691,38 @@ public class ChatSettingActivity extends BaseActivity {
                 Integer tag = (Integer) v2.getTag();
                 switch (tag) {
                     case 0: {
-                        ConfigManager.toggleBoolean(Defines.showDeleteDownloadFiles);
-                        textCell.setChecked(ConfigManager.getBooleanOrFalse(Defines.showDeleteDownloadFiles));
+                        Config.toggleShowDeleteDownloadFiles();
+                        textCell.setChecked(Config.showDeleteDownloadFiles);
                         break;
                     }
                     case 1: {
-                        ConfigManager.putBoolean(Defines.showNoQuoteForward, !ConfigManager.getBooleanOrDefault(Defines.showNoQuoteForward, true));
-                        textCell.setChecked(ConfigManager.getBooleanOrDefault(Defines.showNoQuoteForward, true));
+                        Config.toggleShowNoQuoteForward();
+                        textCell.setChecked(Config.showNoQuoteForward);
                         break;
                     }
                     case 2: {
-                        ConfigManager.toggleBoolean(Defines.showSaveMessages);
-                        textCell.setChecked(ConfigManager.getBooleanOrFalse(Defines.showSaveMessages));
+                        Config.toggleShowSaveMessages();
+                        textCell.setChecked(Config.showSaveMessages);
                         break;
                     }
                     case 3: {
-                        ConfigManager.putBoolean(Defines.showRepeat, !ConfigManager.getBooleanOrDefault(Defines.showRepeat, true));
-                        textCell.setChecked(ConfigManager.getBooleanOrDefault(Defines.showRepeat, true));
+                        Config.toggleShowRepeat();
+                        textCell.setChecked(Config.showRepeat);
                         break;
                     }
                     case 4: {
-                        ConfigManager.toggleBoolean(Defines.showRepeatAsCopy);
-                        textCell.setChecked(ConfigManager.getBooleanOrFalse(Defines.showRepeatAsCopy));
+                        Config.toggleShowViewHistory();
+                        textCell.setChecked(Config.showViewHistory);
                         break;
                     }
-                    case 4+ 1: {
-                        ConfigManager.toggleBoolean(Defines.showReverse);
-                        textCell.setChecked(ConfigManager.getBooleanOrFalse(Defines.showReverse));
+                    case 5: {
+                        Config.toggleShowMessagesDetail();
+                        textCell.setChecked(Config.showMessagesDetail);
                         break;
                     }
-                    case 4 + 1+ 1: {
-                        ConfigManager.toggleBoolean(Defines.showViewHistory);
-                        textCell.setChecked(ConfigManager.getBooleanOrFalse(Defines.showViewHistory));
-                        break;
-                    }
-                    case 5 + 1+ 1: {
-                        ConfigManager.toggleBoolean(Defines.showMessagesDetail);
-                        textCell.setChecked(ConfigManager.getBooleanOrFalse(Defines.showMessagesDetail));
-                        break;
-                    }
-                    case 6 + 1+ 1: {
-                        ConfigManager.toggleBoolean(Defines.showCopyPhoto);
-                        textCell.setChecked(ConfigManager.getBooleanOrFalse(Defines.showCopyPhoto));
-                        break;
-                    }
-                    case 7 + 1+ 1: {
-                        ConfigManager.putBoolean(Defines.showReactions, !ConfigManager.getBooleanOrDefault(Defines.showReactions, true));
-                        textCell.setChecked(ConfigManager.getBooleanOrDefault(Defines.showReactions, true));
-                        break;
-                    }
-                    case 8 + 1+ 1: {
-                        ConfigManager.toggleBoolean(Defines.showReport);
-                        textCell.setChecked(ConfigManager.getBooleanOrFalse(Defines.showReport));
+                    case 6: {
+                        Config.toggleShowCopyPhoto();
+                        textCell.setChecked(Config.showCopyPhoto);
                         break;
                     }
                 }
@@ -875,26 +730,6 @@ public class ChatSettingActivity extends BaseActivity {
         }
         builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
         builder.setView(linearLayout);
-        showDialog(builder.create());
-    }
-
-    private void showTextStyleSettingsAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-        builder.setTitle(LocaleController.getString("TextStyleSettings", R.string.TextStyleSettings));
-
-        RecyclerView recyclerView = new RecyclerView(getParentActivity());
-        recyclerView.setLayoutManager(new LinearLayoutManager(getParentActivity()));
-        recyclerView.setPadding(AndroidUtilities.dp(16), 0, AndroidUtilities.dp(16), 0);
-
-        SortListAdapter adapter = new TextStyleListAdapter();
-        recyclerView.setAdapter(adapter);
-
-        ItemTouchHelperCallback itemTouchHelperCallback = new ItemTouchHelperCallback(adapter);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelperCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
-
-        builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
-        builder.setView(recyclerView);
         showDialog(builder.create());
     }
 
@@ -912,7 +747,7 @@ public class ChatSettingActivity extends BaseActivity {
         editText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         editText.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
         editText.setHintText(LocaleController.getString("Number", R.string.Number));
-        editText.setText(ConfigManager.getIntOrDefault(Defines.maxRecentSticker, 30) + "");
+        editText.setText(Config.maxRecentSticker + "");
         editText.setHeaderHintColor(getThemedColor(Theme.key_windowBackgroundWhiteBlueHeader));
         editText.setSingleLine(true);
         editText.setFocusable(true);
@@ -926,9 +761,9 @@ public class ChatSettingActivity extends BaseActivity {
 
         builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), (dialogInterface, i) -> {
             if (editText.getText().toString().trim().equals("")) {
-                ConfigManager.putInt(Defines.maxRecentSticker, 20);
+                Config.setMaxRecentSticker(20);
             } else {
-                if (!NumberUtils.isInteger(editText.getText().toString())) {
+                if (!UtilsKt.isNumber(editText.getText().toString())) {
                     AndroidUtilities.shakeView(view);
                     AlertUtil.showToast(LocaleController.getString("notANumber", R.string.notANumber));
                 } else {
@@ -936,7 +771,7 @@ public class ChatSettingActivity extends BaseActivity {
                     if (targetNum > 150 || targetNum < 20)
                         AlertUtil.showToast(LocaleController.getString("numberInvalid", R.string.numberInvalid));
                     else
-                        ConfigManager.putInt(Defines.maxRecentSticker, Integer.parseInt(editText.getText().toString()));
+                        Config.setMaxRecentSticker(Integer.parseInt(editText.getText().toString()));
                 }
             }
             listAdapter.notifyItemChanged(pos, PARTIAL);
@@ -1009,7 +844,7 @@ public class ChatSettingActivity extends BaseActivity {
 
         CheckBoxCell cell = new CheckBoxCell(getParentActivity(), 1);
         cell.setBackground(Theme.getSelectorDrawable(false));
-        cell.setText(LocaleController.getString("SendAsReply", R.string.SendAsReply), "", ConfigManager.getBooleanOrFalse(Defines.customQuickMsgSAR), false);
+        cell.setText(LocaleController.getString("SendAsReply", R.string.SendAsReply), "", Config.customQuickMsgSAR, false);
         cell.setPadding(LocaleController.isRTL ? AndroidUtilities.dp(16) : AndroidUtilities.dp(8), 0, LocaleController.isRTL ? AndroidUtilities.dp(8) : AndroidUtilities.dp(16), 0);
         cell.setOnClickListener(v -> {
             CheckBoxCell cell1 = (CheckBoxCell) v;
@@ -1026,8 +861,8 @@ public class ChatSettingActivity extends BaseActivity {
             } else {
                 ConfigManager.putString(Defines.customQuickMessageDisplayName, setDisplayNameEditText.getText().toString());
                 ConfigManager.putString(Defines.customQuickMessage, setMessageEditText.getText().toString());
-                ConfigManager.putBoolean(Defines.customQuickMessageEnabled, true);
-                ConfigManager.putBoolean(Defines.customQuickMsgSAR, cell.isChecked());
+                Config.setCustomQuickMessageEnabled(true);
+                Config.setCustomQuickMsgSAR(true);
             }
         });
 
@@ -1035,8 +870,8 @@ public class ChatSettingActivity extends BaseActivity {
         builder.setNeutralButton(LocaleController.getString("Reset", R.string.Reset), (dialogInterface, i) -> {
             ConfigManager.deleteValue(Defines.customQuickMessage);
             ConfigManager.deleteValue(Defines.customQuickMessageDisplayName);
-            ConfigManager.putBoolean(Defines.customQuickMessageEnabled, false);
-            ConfigManager.putBoolean(Defines.customQuickMsgSAR, false);
+            Config.setCustomQuickMessageEnabled(false);
+            Config.setCustomQuickMsgSAR(false);
         });
 
         builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);

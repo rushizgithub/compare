@@ -100,8 +100,9 @@ import org.telegram.ui.Components.StickerEmptyView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class PhotoPickerActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -385,7 +386,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
 
         @Override
         public boolean cancelButtonPressed() {
-            delegate.actionButtonPressed(true, !ConfigManager.getBooleanOrFalse(Defines.alwaysSendWithoutSound), 0);
+            delegate.actionButtonPressed(true, !Config.alwaysSendWithoutSound, 0);
             finishFragment();
             return true;
         }
@@ -1069,7 +1070,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                 if (chatActivity != null && chatActivity.isInScheduleMode()) {
                     AlertsCreator.createScheduleDatePickerDialog(getParentActivity(), chatActivity.getDialogId(), this::sendSelectedPhotos);
                 } else {
-                    sendSelectedPhotos(!ConfigManager.getBooleanOrFalse(Defines.alwaysSendWithoutSound), 0);
+                    sendSelectedPhotos(!Config.alwaysSendWithoutSound, 0);
                 }
             });
             writeButton.setOnLongClickListener(view -> {
@@ -1132,7 +1133,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                             if (num == 0) {
                                 AlertsCreator.createScheduleDatePickerDialog(getParentActivity(), chatActivity.getDialogId(), this::sendSelectedPhotos);
                             } else {
-                                sendSelectedPhotos(!ConfigManager.getBooleanOrFalse(Defines.alwaysSendWithoutSound), 0);
+                                sendSelectedPhotos(!Config.alwaysSendWithoutSound, 0);
                             }
                         });
                     }

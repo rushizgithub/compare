@@ -36,9 +36,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.Utils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.utils.Utils;
 
 public class Emoji {
 
@@ -295,7 +294,7 @@ public class Emoji {
 
         @Override
         public void draw(Canvas canvas) {
-            if (!ConfigManager.getBooleanOrFalse(Defines.useSystemEmoji) && !isLoaded()) {
+            if (!Config.useSystemEmoji && !isLoaded()) {
                 loadEmoji(info.page, info.page2);
                 placeholderPaint.setColor(placeholderColor);
                 Rect bounds = getBounds();
@@ -310,7 +309,7 @@ public class Emoji {
                 b = getBounds();
             }
 
-            if (ConfigManager.getBooleanOrFalse(Defines.useSystemEmoji)) {
+            if (Config.useSystemEmoji) {
                 String emoji = fixEmoji(EmojiData.data[info.page][info.emojiIndex]);
                 textPaint.setTextSize(b.height() * 0.8f);
                 textPaint.setTypeface(Utils.getSystemEmojiTypeface());
@@ -466,7 +465,10 @@ public class Emoji {
                     } else if (emojiCode.length() >= 2 && emojiCode.charAt(0) == 0xD83C && emojiCode.charAt(1) == 0xDFF4 && next == 0xDB40) {
                         i++;
                         while (true) {
-                            emojiCode.append(cs.charAt(i)).append(cs.charAt(i + 1));
+                            emojiCode.append(cs.charAt(i));
+                            if (i + 1 >= cs.length()) {
+                                emojiCode.append(cs.charAt(i + 1));
+                            }
                             startLength += 2;
                             i += 2;
                             if (i >= cs.length() || cs.charAt(i) != 0xDB40) {
@@ -610,6 +612,7 @@ public class Emoji {
 
     public static class EmojiSpan extends ImageSpan {
         public Paint.FontMetricsInt fontMetrics;
+        public float scale = 1f;
         public int size = AndroidUtilities.dp(20);
         public String emoji;
 
@@ -645,6 +648,7 @@ public class Emoji {
                 fm = new Paint.FontMetricsInt();
             }
 
+            int scaledSize = (int) (scale * size);
             if (fontMetrics == null) {
                 int sz = super.getSize(paint, text, start, end, fm);
 
@@ -666,9 +670,9 @@ public class Emoji {
                     fm.bottom = fontMetrics.bottom;
                 }
                 if (getDrawable() != null) {
-                    getDrawable().setBounds(0, 0, size, size);
+                    getDrawable().setBounds(0, 0, scaledSize, scaledSize);
                 }
-                return size;
+                return scaledSize;
             }
         }
 
@@ -677,7 +681,7 @@ public class Emoji {
 
         @Override
         public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
-            lastDrawX = x + size / 2f;
+            lastDrawX = x + scale * size / 2f;
             lastDrawY = top + (bottom - top) / 2f;
             drawn = true;
 
@@ -687,10 +691,11 @@ public class Emoji {
                 getDrawable().setAlpha(paint.getAlpha());
             }
             boolean needRestore = false;
-            if (emojiDrawingYOffset != 0) {
+            float ty = emojiDrawingYOffset - (size - scale * size) / 2;
+            if (ty != 0) {
                 needRestore = true;
                 canvas.save();
-                canvas.translate(0, emojiDrawingYOffset);
+                canvas.translate(0, ty);
             }
             super.draw(canvas, text, start, end, x, top, y, bottom, paint);
             if (needRestore) {

@@ -84,7 +84,7 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import top.qwq2333.nullgram.utils.Log;
+import xyz.nextalone.nnngram.utils.Log;
 
 public class ChatUsersActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -629,6 +629,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
         flickerLoadingView.setViewType(FlickerLoadingView.USERS_TYPE);
         flickerLoadingView.showDate(false);
         flickerLoadingView.setUseHeaderOffset(true);
+        flickerLoadingView.setColors(Theme.key_actionBarDefaultSubmenuBackground, Theme.key_listSelector, Theme.key_listSelector);
         progressLayout.addView(flickerLoadingView);
 
         progressBar = new RadialProgressView(context);

@@ -34,5 +34,7 @@ gradleEnterprise {
 rootProject.name = "Nnngram"
 include(
     ":TMessagesProj",
-    ":tcp2ws",
+    ":libs:tcp2ws",
+    ":libs:pangu",
+    ":libs:ksp"
 )

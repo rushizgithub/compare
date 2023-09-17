@@ -10,25 +10,29 @@ import android.graphics.Rect;
 import android.graphics.Region;
 import android.text.Layout;
 import android.text.Spanned;
+import android.text.StaticLayout;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.ui.Cells.TextSelectionHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.utils.Defines;
 
-public class SpoilersTextView extends TextView {
-    private final SpoilersClickDetector clickDetector;
-    private final List<SpoilerEffect> spoilers = new ArrayList<>();
-    private final Stack<SpoilerEffect> spoilersPool = new Stack<>();
+public class SpoilersTextView extends TextView implements TextSelectionHelper.SimpleSelectabeleView {
+    private SpoilersClickDetector clickDetector;
+    protected List<SpoilerEffect> spoilers = new ArrayList<>();
+    private Stack<SpoilerEffect> spoilersPool = new Stack<>();
     private boolean isSpoilersRevealed;
     private final Path path = new Path();
     private Paint xRefPaint;
+    public boolean allowClickSpoilers = true;
 
     public SpoilersTextView(Context context) {
         this(context, true);
@@ -53,14 +57,14 @@ public class SpoilersTextView extends TextView {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        if (clickDetector.onTouchEvent(event))
+        if (allowClickSpoilers && clickDetector.onTouchEvent(event))
             return true;
         return super.dispatchTouchEvent(event);
     }
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        isSpoilersRevealed = ConfigManager.getBooleanOrFalse(Defines.displaySpoilerMsgDirectly);
+        isSpoilersRevealed = Config.displaySpoilerMsgDirectly;
         super.setText(text, type);
     }
 
@@ -149,5 +153,10 @@ public class SpoilersTextView extends TextView {
             SpoilerEffect.addSpoilers(this, spoilersPool, spoilers);
         }
         invalidate();
+    }
+
+    @Override
+    public Layout getStaticTextLayout() {
+        return getLayout();
     }
 }

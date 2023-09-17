@@ -20,6 +20,7 @@
 package top.qwq2333.nullgram.utils
 
 import android.content.Context
+import android.util.Base64
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.BuildConfig
 import org.telegram.messenger.LocaleController
@@ -31,22 +32,26 @@ import org.telegram.messenger.browser.Browser
 import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
+import org.telegram.tgnet.TLRPC.Chat
 import org.telegram.ui.ActionBar.AlertDialog
 import top.qwq2333.nullgram.config.ConfigManager
+import java.util.Arrays
 
 object UpdateUtils {
 
     private const val channelUsername = "NullgramClient"
 
+    private val originalChannelUsername = String(Base64.decode("TnVsbGdyYW1DbGllbnQK", Base64.DEFAULT))
+
     @JvmStatic
     fun postCheckFollowChannel(ctx: Context, currentAccount: Int) = UIUtil.runOnIoDispatcher {
-
         if (ConfigManager.getBooleanOrFalse(Defines.updateChannelSkip)) return@runOnIoDispatcher
 
         val messagesCollector = MessagesController.getInstance(currentAccount)
         val connectionsManager = ConnectionsManager.getInstance(currentAccount)
         val messagesStorage = MessagesStorage.getInstance(currentAccount)
         val updateChannel = messagesCollector.getUserOrChat(channelUsername)
+        val originalChannel = messagesCollector.getUserOrChat(channelUsername)
 
         if (updateChannel is TLRPC.Chat) checkFollowChannel(ctx, currentAccount, updateChannel) else {
             connectionsManager.sendRequest(TLRPC.TL_contacts_resolveUsername().apply {
@@ -61,12 +66,24 @@ object UpdateUtils {
                 }
             }
         }
+
+        if (originalChannel is TLRPC.Chat) checkOriginalChannel(ctx, currentAccount, originalChannel) else {
+            connectionsManager.sendRequest(TLRPC.TL_contacts_resolveUsername().apply {
+                username = originalChannelUsername
+            }) { response: TLObject?, error: TLRPC.TL_error? ->
+                if (error == null) {
+                    val res = response as TLRPC.TL_contacts_resolvedPeer
+                    val chat = res.chats.find { it.username == channelUsername } ?: return@sendRequest
+                    messagesCollector.putChats(res.chats, false)
+                    messagesStorage.putUsersAndChats(res.users, res.chats, false, true)
+                    checkFollowChannel(ctx, currentAccount, chat)
+                }
+            }
+        }
     }
 
     private fun checkFollowChannel(ctx: Context, currentAccount: Int, channel: TLRPC.Chat) {
-
         if (!channel.left || channel.kicked) {
-            //   MessagesController.getMainSettings(currentAccount).edit().putBoolean("update_channel_skip", true).apply()
             return
         }
         UIUtil.runOnUIThread {
@@ -91,6 +108,38 @@ object UpdateUtils {
             try {
                 builder.show()
             } catch (ignored: Exception) {
+            }
+        }
+    }
+
+    private fun checkOriginalChannel(ctx: Context, currentAccount: Int, channel: Chat) {
+        if (!channel.left || channel.kicked) {
+            return
+        }
+
+        if (BuildConfig.APPLICATION_ID != Arrays.toString(Base64.decode("dG9wLnF3cTIzMzMubnVsbGdyYW0=", Base64.DEFAULT))) {
+            UIUtil.runOnUIThread {
+                val messagesCollector = MessagesController.getInstance(currentAccount)
+                val userConfig = UserConfig.getInstance(currentAccount)
+                val builder = AlertDialog.Builder(ctx)
+
+                builder.setTitle(LocaleController.getString("OneMoreThing", R.string.OneMoreThing))
+                builder.setMessage(LocaleController.getString("NotOriginalNullgramInfo", R.string.NotOriginalNullgramInfo))
+
+
+                builder.setPositiveButton(LocaleController.getString("ChannelJoin", R.string.ChannelJoin)) { _, _ ->
+                    messagesCollector.addUserToChat(channel.id, userConfig.currentUser, 0, null, null, null)
+                    Browser.openUrl(ctx, "https://t.me/$originalChannelUsername")
+                }
+                builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null)
+
+                builder.setNeutralButton(LocaleController.getString("DoNotRemindAgain", R.string.DoNotRemindAgain)) { _, _ ->
+                    ConfigManager.putBoolean(Defines.updateChannelSkip, true)
+                }
+                try {
+                    builder.show()
+                } catch (ignored: Exception) {
+                }
             }
         }
     }
@@ -120,9 +169,9 @@ object UpdateUtils {
             limit = maxReadCount
         }.let { req ->
             val sendReq = Runnable {
-                accountInstance.connectionsManager.sendRequest(req) { resp: TLObject, error: TLRPC.TL_error? ->
-                    if (error != null) {
-                        Log.e("checkUpdate", "Error when retrieving update metadata from channel ${error.text}")
+                accountInstance.connectionsManager.sendRequest(req) { resp: TLObject?, error: TLRPC.TL_error? ->
+                    if (error != null || resp == null) {
+                        Log.e("checkUpdate", "Error when retrieving update metadata from channel ${error?.text}")
                         callback.invoke(null, true)
                         return@sendRequest
                     }
@@ -196,9 +245,9 @@ object UpdateUtils {
                 TLRPC.TL_contacts_resolveUsername().apply {
                     username = metadataChannelName
                 }.let { req2 ->
-                    accountInstance.connectionsManager.sendRequest(req2) { resp: TLObject, error: TLRPC.TL_error? ->
-                        if (error != null) {
-                            Log.e("checkUpdate", "Error when retrieving update metadata from channel ${error.text}")
+                    accountInstance.connectionsManager.sendRequest(req2) { resp: TLObject?, error: TLRPC.TL_error? ->
+                        if (error != null || resp == null) {
+                            Log.e("checkUpdate", "Error when retrieving update metadata from channel ${error?.text}")
                             callback.invoke(null, true)
                             return@sendRequest
                         }
@@ -231,6 +280,7 @@ object UpdateUtils {
     @JvmStatic
     fun checkUpdate(callback: (TLRPC.TL_help_appUpdate?, Boolean) -> Unit) {
         if (BuildConfig.isPlay) return
+        if (!UserConfig.getInstance(UserConfig.selectedAccount).isClientActivated) return
         val (apksChannelID, apksChannelName) = when (ConfigManager.getIntOrDefault(Defines.updateChannel, -1)) {
             Defines.stableChannel -> stableChannelAPKsID to stableChannelAPKsName
             Defines.ciChannel -> previewChannelAPKsID to previewChannelAPKsName
@@ -250,16 +300,16 @@ object UpdateUtils {
             }
 
             val sendReq = Runnable {
-                accountInstance.connectionsManager.sendRequest(req) { resp: TLObject, error: TLRPC.TL_error? ->
-                    if (error != null) {
-                        Log.e("checkUpdate", "Error when retrieving update from channel ${error.text}")
+                accountInstance.connectionsManager.sendRequest(req) { resp: TLObject?, error: TLRPC.TL_error? ->
+                    if (error != null || resp == null) {
+                        Log.e("checkUpdate", "Error when retrieving update metadata from channel ${error?.text}")
                         callback.invoke(null, true)
                         return@sendRequest
                     }
                     val res = resp as TLRPC.messages_Messages
                     for (msg in res.messages) {
                         if (msg.media == null) {
-                            Log.i("checkUpdate", "res.messages.get(i).media == null")
+                            Log.d("checkUpdate", "res.messages.get(i).media == null")
                             continue
                         }
                         val apkDocument = msg.media.document
@@ -290,9 +340,9 @@ object UpdateUtils {
                 TLRPC.TL_contacts_resolveUsername().apply {
                     username = apksChannelName
                 }.let { req2 ->
-                    accountInstance.connectionsManager.sendRequest(req2) { resp: TLObject, error: TLRPC.TL_error? ->
-                        if (error != null) {
-                            Log.e("checkUpdate", "Error when retrieving update from channel ${error.text}")
+                    accountInstance.connectionsManager.sendRequest(req2) { resp: TLObject?, error: TLRPC.TL_error? ->
+                        if (error != null || resp == null) {
+                            Log.e("checkUpdate", "Error when retrieving update metadata from channel ${error?.text}")
                             callback.invoke(null, true)
                             return@sendRequest
                         }

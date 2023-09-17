@@ -5,12 +5,14 @@ import android.view.WindowManager;
 
 import java.util.HashMap;
 
+import xyz.nextalone.gen.Config;
+
 public class FlagSecureReason {
 
     private static HashMap<Window, Integer> currentSecureReasons;
 
-    private Window window;
-    private FlagSecureCondition condition;
+    private final Window window;
+    private final FlagSecureCondition condition;
 
     public FlagSecureReason(Window window, FlagSecureCondition condition) {
         this.window = window;
@@ -60,6 +62,10 @@ public class FlagSecureReason {
     }
 
     private static void updateWindowSecure(Window window) {
+        if (Config.allowScreenshotOnNoForwardChat) {
+            return;
+        }
+
         if (window == null) {
             return;
         }
@@ -74,7 +80,6 @@ public class FlagSecureReason {
     public static boolean isSecuredNow(Window window) {
         return currentSecureReasons != null && currentSecureReasons.get(window) != null;
     }
-
 
     public interface FlagSecureCondition {
         boolean run();

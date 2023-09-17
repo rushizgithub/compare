@@ -13,6 +13,8 @@ import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaCodecInfo;
+import android.media.MediaCodecList;
 import android.os.Build;
 import android.os.Environment;
 import android.os.SystemClock;
@@ -22,6 +24,7 @@ import android.webkit.WebView;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.pm.ShortcutManagerCompat;
 
 import org.json.JSONException;
@@ -43,18 +46,19 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.helpers.WebSocketHelper;
-import top.qwq2333.nullgram.utils.AlertUtil;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.Log;
-import top.qwq2333.nullgram.utils.StringUtils;
-import top.qwq2333.nullgram.utils.UIUtil;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.helpers.WebSocketHelper;
+import xyz.nextalone.nnngram.utils.AlertUtil;
+import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.Log;
+import xyz.nextalone.nnngram.utils.StringUtils;
+import xyz.nextalone.nnngram.utils.UIUtil;
 
 public class SharedConfig {
     /**
@@ -103,6 +107,86 @@ public class SharedConfig {
                 }
             });
         }
+    }
+
+    static Boolean allowPreparingHevcPlayers;
+
+    public static boolean allowPreparingHevcPlayers() {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M) {
+            return false;
+        }
+        if (allowPreparingHevcPlayers == null) {
+            int codecCount = MediaCodecList.getCodecCount();
+            int maxInstances = 0;
+            int capabilities = 0;
+
+            for (int i = 0; i < codecCount; i++) {
+                MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
+                if (codecInfo.isEncoder()) {
+                    continue;
+                }
+
+                boolean found = false;
+                for (int k = 0; k < codecInfo.getSupportedTypes().length; k++) {
+                    if (codecInfo.getSupportedTypes()[k].contains("video/hevc")) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    continue;
+                }
+                capabilities = codecInfo.getCapabilitiesForType("video/hevc").getMaxSupportedInstances();
+                if (capabilities > maxInstances) {
+                    maxInstances = capabilities;
+                }
+            }
+            allowPreparingHevcPlayers = maxInstances >= 8;
+        }
+        return allowPreparingHevcPlayers;
+    }
+
+    public static void toggleSurfaceInStories() {
+        useSurfaceInStories = !useSurfaceInStories;
+        ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE)
+                .edit()
+                .putBoolean("useSurfaceInStories", useSurfaceInStories)
+                .apply();
+    }
+
+    private static String goodHevcEncoder;
+    private static HashSet<String> hevcEncoderWhitelist = new HashSet<>();
+    static {
+        hevcEncoderWhitelist.add("c2.exynos.hevc.encoder");
+        hevcEncoderWhitelist.add("OMX.Exynos.HEVC.Encoder".toLowerCase());
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public static String findGoodHevcEncoder() {
+        if (goodHevcEncoder == null) {
+            int codecCount = MediaCodecList.getCodecCount();
+            for (int i = 0; i < codecCount; i++) {
+                MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
+                if (!codecInfo.isEncoder()) {
+                    continue;
+                }
+
+                for (int k = 0; k < codecInfo.getSupportedTypes().length; k++) {
+                    if (codecInfo.getSupportedTypes()[k].contains("video/hevc") && codecInfo.isHardwareAccelerated() && isWhitelisted(codecInfo)) {
+                        return goodHevcEncoder = codecInfo.getName();
+                    }
+                }
+            }
+            goodHevcEncoder = "";
+        }
+        return TextUtils.isEmpty(goodHevcEncoder) ? null : goodHevcEncoder;
+    }
+
+    private static boolean isWhitelisted(MediaCodecInfo codecInfo) {
+        if (BuildVars.DEBUG_PRIVATE_VERSION) {
+            return true;
+        }
+        return hevcEncoderWhitelist.contains(codecInfo.getName().toLowerCase());
     }
 
     @Retention(RetentionPolicy.SOURCE)
@@ -159,11 +243,14 @@ public class SharedConfig {
     public static boolean searchMessagesAsListUsed;
     public static boolean stickersReorderingHintUsed;
     public static int dayNightWallpaperSwitchHint;
+    public static boolean storyReactionsLongPressHint;
     public static boolean disableVoiceAudioEffects;
     public static boolean forceDisableTabletMode;
     public static boolean useLNavigation;
-    public static boolean updateStickersOrderOnSend = ConfigManager.getBooleanOrFalse(Defines.disableStickersAutoReorder);
+    public static boolean updateStickersOrderOnSend = Config.disableStickersAutoReorder;
     public static boolean bigCameraForRound;
+    public static boolean useSurfaceInStories;
+    public static int stealthModeSendMessageConfirm = 2;
     private static int lastLocalId = -210000;
 
     public static String storageCacheDir;
@@ -235,6 +322,7 @@ public class SharedConfig {
 
     public static int distanceSystemType;
     public static int mediaColumnsCount = 3;
+    public static int storiesColumnsCount = 3;
     public static int fastScrollHintCount = 3;
     public static boolean dontAskManageStorage;
 
@@ -477,50 +565,28 @@ public class SharedConfig {
     public static boolean proxyEnabled;
 
     public static void setProxyEnable(boolean enable) {
-
         proxyEnabled = enable;
-
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-
         preferences.edit().putBoolean("proxy_enabled", enable).commit();
-
         ProxyInfo info = currentProxy;
-
         if (info == null) {
-
             info = new ProxyInfo();
-
         }
-
         ProxyInfo finalInfo = info;
-
         UIUtil.runOnIoDispatcher(() -> {
-
             try {
-
                 if (enable && finalInfo instanceof ExternalSocks5Proxy) {
-
                     ((ExternalSocks5Proxy) finalInfo).start();
-
                 } else if (!enable && finalInfo instanceof ExternalSocks5Proxy) {
-
                     ((ExternalSocks5Proxy) finalInfo).stop();
-
                 }
-
             } catch (Exception e) {
-
                 FileLog.e(e);
                 AlertUtil.showToast(e);
-
                 return;
-
             }
-
             ConnectionsManager.setProxySettings(enable, finalInfo.address, finalInfo.port, finalInfo.username, finalInfo.password, finalInfo.secret);
-
             UIUtil.runOnUIThread(() -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged));
-
         });
 
     }
@@ -791,6 +857,7 @@ public class SharedConfig {
             searchMessagesAsListHintShows = preferences.getInt("searchMessagesAsListHintShows", 0);
             searchMessagesAsListUsed = preferences.getBoolean("searchMessagesAsListUsed", false);
             stickersReorderingHintUsed = preferences.getBoolean("stickersReorderingHintUsed", false);
+            storyReactionsLongPressHint = preferences.getBoolean("storyReactionsLongPressHint", false);
             textSelectionHintShows = preferences.getInt("textSelectionHintShows", 0);
             scheduledOrNoSoundHintShows = preferences.getInt("scheduledOrNoSoundHintShows", 0);
             forwardingOptionsHintShown = preferences.getBoolean("forwardingOptionsHintShown", false);
@@ -801,14 +868,17 @@ public class SharedConfig {
             messageSeenHintCount = preferences.getInt("messageSeenCount", 3);
             emojiInteractionsHintCount = preferences.getInt("emojiInteractionsHintCount", 3);
             dayNightThemeSwitchHintCount = preferences.getInt("dayNightThemeSwitchHintCount", 3);
+            stealthModeSendMessageConfirm = preferences.getInt("stealthModeSendMessageConfirm", 2);
             mediaColumnsCount = preferences.getInt("mediaColumnsCount", 3);
+            storiesColumnsCount = preferences.getInt("storiesColumnsCount", 3);
             fastScrollHintCount = preferences.getInt("fastScrollHintCount", 3);
             dontAskManageStorage = preferences.getBoolean("dontAskManageStorage", false);
             hasEmailLogin = preferences.getBoolean("hasEmailLogin", false);
             isFloatingDebugActive = preferences.getBoolean("floatingDebugActive", false);
-            updateStickersOrderOnSend = ConfigManager.getBooleanOrFalse(Defines.disableStickersAutoReorder);
+            updateStickersOrderOnSend = Config.disableStickersAutoReorder;
             dayNightWallpaperSwitchHint = preferences.getInt("dayNightWallpaperSwitchHint", 0);
             bigCameraForRound = preferences.getBoolean("bigCameraForRound", false);
+            useSurfaceInStories = preferences.getBoolean("useSurfaceInStories", Build.VERSION.SDK_INT >= 30);
 
             preferences = ApplicationLoader.applicationContext.getSharedPreferences("Notifications", Activity.MODE_PRIVATE);
             showNotificationsForAllAccounts = preferences.getBoolean("AllAccounts", true);
@@ -918,6 +988,22 @@ public class SharedConfig {
         return true;
     }
 
+    // returns a >= b
+    private static boolean versionBiggerOrEqual(String a, String b) {
+        String[] partsA = a.split("\\.");
+        String[] partsB = b.split("\\.");
+        for (int i = 0; i < Math.min(partsA.length, partsB.length); ++i) {
+            int numA = Integer.parseInt(partsA[i]);
+            int numB = Integer.parseInt(partsB[i]);
+            if (numA < numB) {
+                return false;
+            } else if (numA > numB) {
+                return true;
+            }
+        }
+        return true;
+    }
+
     public static boolean checkPasscode(String passcode) {
         if (passcodeSalt.length == 0) {
             boolean result = Utilities.MD5(passcode).equals(passcodeHash);
@@ -975,6 +1061,7 @@ public class SharedConfig {
         messageSeenHintCount = 3;
         emojiInteractionsHintCount = 3;
         dayNightThemeSwitchHintCount = 3;
+        stealthModeSendMessageConfirm = 2;
         dayNightWallpaperSwitchHint = 0;
         saveConfig();
     }
@@ -1000,6 +1087,14 @@ public class SharedConfig {
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("stickersReorderingHintUsed", stickersReorderingHintUsed);
+        editor.apply();
+    }
+
+    public static void setStoriesReactionsLongPressHintUsed(boolean value) {
+        storyReactionsLongPressHint = value;
+        SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("storyReactionsLongPressHint", storyReactionsLongPressHint);
         editor.apply();
     }
 
@@ -1077,7 +1172,7 @@ public class SharedConfig {
 
     public static void toggleUpdateStickersOrderOnSend() {
         updateStickersOrderOnSend = !updateStickersOrderOnSend;
-        ConfigManager.putBoolean(Defines.disableStickersAutoReorder, !ConfigManager.getBooleanOrDefault(Defines.disableStickersAutoReorder, true));
+        Config.toggleDisableStickersAutoReorder();
     }
 
     public static void checkLogsToDelete() {
@@ -1626,6 +1721,12 @@ public class SharedConfig {
         preferences.edit().putInt("dayNightThemeSwitchHintCount", dayNightThemeSwitchHintCount).apply();
     }
 
+    public static void updateStealthModeSendMessageConfirm(int count) {
+        stealthModeSendMessageConfirm = count;
+        SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
+        preferences.edit().putInt("stealthModeSendMessageConfirm", stealthModeSendMessageConfirm).apply();
+    }
+
     public final static int PERFORMANCE_CLASS_LOW = 0;
     public final static int PERFORMANCE_CLASS_AVERAGE = 1;
     public final static int PERFORMANCE_CLASS_HIGH = 2;
@@ -1641,8 +1742,8 @@ public class SharedConfig {
 
     @PerformanceClass
     public static int getDevicePerformanceClass() {
-        if (ConfigManager.getIntOrDefault(Defines.devicePerformance, Defines.devicePerformanceAuto) != Defines.devicePerformanceAuto) {
-            return ConfigManager.getIntOrDefault(Defines.devicePerformance, Defines.devicePerformanceAuto);
+        if (Config.devicePerformance != Defines.devicePerformanceAuto) {
+            return Config.devicePerformance;
         }
         if (overrideDevicePerformanceClass != -1) {
             return overrideDevicePerformanceClass;
@@ -1733,6 +1834,13 @@ public class SharedConfig {
         }
     }
 
+    public static void setStoriesColumnsCount(int count) {
+        if (storiesColumnsCount != count) {
+            storiesColumnsCount = count;
+            ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE).edit().putInt("storiesColumnsCount", storiesColumnsCount).apply();
+        }
+    }
+
     public static void setFastScrollHintCount(int count) {
         if (fastScrollHintCount != count) {
             fastScrollHintCount = count;
@@ -1812,8 +1920,8 @@ public class SharedConfig {
 
     @Deprecated
     public static int getLegacyDevicePerformanceClass() {
-        if (ConfigManager.getIntOrDefault(Defines.devicePerformance, Defines.devicePerformanceAuto) != Defines.devicePerformanceAuto) {
-            return ConfigManager.getIntOrDefault(Defines.devicePerformance, Defines.devicePerformanceAuto);
+        if (Config.devicePerformance != Defines.devicePerformanceAuto) {
+            return Config.devicePerformance;
         }
         if (legacyDevicePerformanceClass == -1) {
             int androidVersion = Build.VERSION.SDK_INT;

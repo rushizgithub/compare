@@ -1,22 +1,17 @@
 import java.io.File
 import java.util.Properties
+import org.gradle.api.JavaVersion
 
 object Version {
 
     @JvmStatic
-    val kotlin = "1.8.22"
+    val java = JavaVersion.VERSION_17
 
     @JvmStatic
-    val ktor = "2.3.1"
+    val officialVersionName = "10.0.5"
 
     @JvmStatic
-    val JavaVersion = "17"
-
-    @JvmStatic
-    val officialVersionName = "9.6.6"
-
-    @JvmStatic
-    val isStable = false
+    val isStable = true
 
     fun findBuildToolsVersion(): String {
         val defaultBuildToolsVersion = "33.0.0"

@@ -37,6 +37,7 @@ import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.AvatarDrawable;
@@ -45,17 +46,20 @@ import org.telegram.ui.Components.CheckBox2;
 import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.Premium.PremiumGradient;
 import org.telegram.ui.Components.RecyclerListView;
+import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.NotificationsSettingsActivity;
+import org.telegram.ui.Stories.StoriesListPlaceProvider;
+import org.telegram.ui.Stories.StoriesUtilities;
 
 import java.util.Locale;
 
-import top.qwq2333.nullgram.utils.StringUtils;
+import xyz.nextalone.nnngram.utils.StringUtils;
 
 public class ProfileSearchCell extends BaseCell implements NotificationCenter.NotificationCenterDelegate {
 
     private CharSequence currentName;
-    private final ImageReceiver avatarImage;
-    private final AvatarDrawable avatarDrawable;
+    public ImageReceiver avatarImage;
+    private AvatarDrawable avatarDrawable;
     private CharSequence subLabel;
     private Theme.ResourcesProvider resourcesProvider;
 
@@ -104,6 +108,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
     private int statusLeft;
     private StaticLayout statusLayout;
     private AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable statusDrawable;
+    public StoriesUtilities.AvatarStoryParams avatarStoryParams = new StoriesUtilities.AvatarStoryParams(false);
 
     private final RectF rect = new RectF();
 
@@ -322,6 +327,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
             drawPremium = !savedMessages && MessagesController.getInstance(currentAccount).isPremiumUser(user);
             updateStatus(drawCheck, user, false);
         } else if (contact != null) {
+            dialog_id = 0;
             if (!LocaleController.isRTL) {
                 nameLeft = AndroidUtilities.dp(AndroidUtilities.leftBaseline);
             } else {
@@ -505,8 +511,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
         } else {
             avatarLeft = AndroidUtilities.dp(11) + getPaddingLeft();
         }
-
-        avatarImage.setImageCoords(avatarLeft, AndroidUtilities.dp(7), AndroidUtilities.dp(46), AndroidUtilities.dp(46));
+        avatarStoryParams.originalAvatarRect.set(avatarLeft, AndroidUtilities.dp(7), avatarLeft + AndroidUtilities.dp(46), AndroidUtilities.dp(7) + AndroidUtilities.dp(46));
 
         double widthpx;
         float left;
@@ -749,7 +754,12 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
             actionLayout.draw(canvas);
             canvas.restore();
         }
-        avatarImage.draw(canvas);
+        if (user != null) {
+            StoriesUtilities.drawAvatarWithStory(user.id, canvas, avatarImage, avatarStoryParams);
+        } else {
+            avatarImage.setImageCoords(avatarStoryParams.originalAvatarRect);
+            avatarImage.draw(canvas);
+        }
     }
 
     @Override
@@ -794,6 +804,9 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (user != null && avatarStoryParams.checkOnTouchEvent(event, this)) {
+            return true;
+        }
         if (actionButton != null && actionButton.checkTouchEvent(event)) {
             return true;
         }

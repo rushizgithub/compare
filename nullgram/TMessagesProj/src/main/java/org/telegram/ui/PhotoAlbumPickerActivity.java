@@ -73,8 +73,9 @@ import org.telegram.ui.Components.SizeNotifierFrameLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class PhotoAlbumPickerActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -430,7 +431,7 @@ public class PhotoAlbumPickerActivity extends BaseFragment implements Notificati
                     finishFragment();
                 });
             } else {
-                sendSelectedPhotos(selectedPhotos, selectedPhotosOrder, !ConfigManager.getBooleanOrFalse(Defines.alwaysSendWithoutSound), 0);
+                sendSelectedPhotos(selectedPhotos, selectedPhotosOrder, !Config.alwaysSendWithoutSound, 0);
                 finishFragment();
             }
         });
@@ -497,7 +498,7 @@ public class PhotoAlbumPickerActivity extends BaseFragment implements Notificati
                                 finishFragment();
                             });
                         } else {
-                            sendSelectedPhotos(selectedPhotos, selectedPhotosOrder, !ConfigManager.getBooleanOrFalse(Defines.alwaysSendWithoutSound), 0);
+                            sendSelectedPhotos(selectedPhotos, selectedPhotosOrder, !Config.alwaysSendWithoutSound, 0);
                             finishFragment();
                         }
                     });

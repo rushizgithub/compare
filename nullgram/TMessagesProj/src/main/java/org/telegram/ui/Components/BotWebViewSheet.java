@@ -41,6 +41,7 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.messenger.SendMessagesHelper;
 import org.telegram.messenger.UserObject;
 import org.telegram.messenger.Utilities;
 import org.telegram.tgnet.ConnectionsManager;
@@ -111,6 +112,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
     private boolean silent;
     private String buttonText;
 
+
     private Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint dimPaint = new Paint();
     private Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -123,6 +125,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
     private ActionBar actionBar;
     private Drawable actionBarShadow;
     private ActionBarMenuSubItem settingsItem;
+    private TLRPC.BotApp currentWebApp;
 
     private boolean dismissed;
 
@@ -146,7 +149,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
             prolongWebView.query_id = queryId;
             prolongWebView.silent = silent;
             if (replyToMsgId != 0) {
-                prolongWebView.reply_to_msg_id = replyToMsgId;
+                prolongWebView.reply_to = SendMessagesHelper.creteReplyInput(replyToMsgId);
                 prolongWebView.flags |= 1;
             }
             ConnectionsManager.getInstance(currentAccount).sendRequest(prolongWebView, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
@@ -322,6 +325,8 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
                     args.putBoolean("onlySelect", true);
 
                     args.putBoolean("allowGroups", chatTypes.contains("groups"));
+                    args.putBoolean("allowMegagroups", chatTypes.contains("groups"));
+                    args.putBoolean("allowLegacyGroups", chatTypes.contains("groups"));
                     args.putBoolean("allowUsers", chatTypes.contains("users"));
                     args.putBoolean("allowChannels", chatTypes.contains("channels"));
                     args.putBoolean("allowBots", chatTypes.contains("bots"));
@@ -410,6 +415,14 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
                                 }
                             }).start();
                 }
+            }
+
+            @Override
+            public String getWebAppName() {
+                if (currentWebApp != null) {
+                    return currentWebApp.title;
+                }
+                return null;
             }
         });
 
@@ -761,6 +774,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
         this.replyToMsgId = replyToMsgId;
         this.silent = silent;
         this.buttonText = buttonText;
+        this.currentWebApp = app;
 
         actionBar.setTitle(UserObject.getUserName(MessagesController.getInstance(currentAccount).getUser(botId)));
         ActionBarMenu menu = actionBar.createMenu();
@@ -884,7 +898,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
                 }
 
                 if (replyToMsgId != 0) {
-                    req.reply_to_msg_id = replyToMsgId;
+                    req.reply_to = SendMessagesHelper.creteReplyInput(replyToMsgId);
                     req.flags |= 1;
                 }
 
@@ -945,11 +959,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
     }
 
     private int getColor(int key) {
-        if (resourcesProvider != null && resourcesProvider.contains(key)) {
-            return resourcesProvider.getColor(key);
-        } else {
-            return Theme.getColor(key);
-        }
+        return Theme.getColor(key, resourcesProvider);
     }
 
     @Override

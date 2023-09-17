@@ -41,6 +41,7 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.ContactsController;
+import org.telegram.messenger.FlagSecureReason;
 import org.telegram.messenger.LanguageDetector;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessageObject;
@@ -65,6 +66,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import kotlin.Unit;
 import top.qwq2333.nullgram.ui.TextViewEffects;
 import top.qwq2333.nullgram.utils.MessageUtils;
 import top.qwq2333.nullgram.utils.Utils;
@@ -84,7 +86,7 @@ public class MessageDetailActivity extends BaseActivity implements NotificationC
     private int dc;
     private long stickerSetOwner;
     private final ArrayList<Long> emojiSetOwners = new ArrayList<>();
-    private Runnable unregisterFlagSecure;
+    private FlagSecureReason unregisterFlagSecure;
 
     private int idRow;
     private int messageRow;
@@ -215,9 +217,8 @@ public class MessageDetailActivity extends BaseActivity implements NotificationC
     public View createView(Context context) {
         View fragmentView = super.createView(context);
 
-        if (noforwards) {
-            unregisterFlagSecure = AndroidUtilities.registerFlagSecure(getParentActivity().getWindow());
-        }
+        unregisterFlagSecure = new FlagSecureReason(getParentActivity().getWindow(), () -> noforwards);
+        unregisterFlagSecure.attach();
 
         return fragmentView;
     }
@@ -331,6 +332,7 @@ public class MessageDetailActivity extends BaseActivity implements NotificationC
                             builder1.append(emojiSetOwner);
                         }
                         cell.setTextAndValueWithEmoji("", builder1, false);
+                        return Unit.INSTANCE;
                     });
                     builder.append("Loading...");
                     builder.append("\n");
@@ -416,9 +418,7 @@ public class MessageDetailActivity extends BaseActivity implements NotificationC
     public void onFragmentDestroy() {
         super.onFragmentDestroy();
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.emojiLoaded);
-        if (unregisterFlagSecure != null) {
-            unregisterFlagSecure.run();
-        }
+        unregisterFlagSecure.detach();
     }
 
     private class ListAdapter extends BaseListAdapter {
@@ -522,6 +522,7 @@ public class MessageDetailActivity extends BaseActivity implements NotificationC
                                     builder1.append(stickerSetOwner);
                                 }
                                 textCell.setTextAndValueWithEmoji("Sticker Pack creator", builder1, divider);
+                                return Unit.INSTANCE;
                             });
                             builder.append("Loading...");
                             builder.append("\n");
@@ -589,9 +590,10 @@ public class MessageDetailActivity extends BaseActivity implements NotificationC
             TLRPC.User user = (TLRPC.User) object;
             builder.append(ContactsController.formatName(user.first_name, user.last_name));
             builder.append("\n");
-            if (!TextUtils.isEmpty(user.username)) {
+            var username = UserObject.getPublicUsername(user);
+            if (!TextUtils.isEmpty(username)) {
                 builder.append("@");
-                builder.append(UserObject.getPublicUsername(user));
+                builder.append(username);
                 builder.append("\n");
             }
             builder.append(user.id);
@@ -599,9 +601,10 @@ public class MessageDetailActivity extends BaseActivity implements NotificationC
             TLRPC.Chat chat = (TLRPC.Chat) object;
             builder.append(chat.title);
             builder.append("\n");
-            if (!TextUtils.isEmpty(chat.username)) {
+            var username = ChatObject.getPublicUsername(chat);
+            if (!TextUtils.isEmpty(username)) {
                 builder.append("@");
-                builder.append(ChatObject.getPublicUsername(chat));
+                builder.append(username);
                 builder.append("\n");
             }
             builder.append(chat.id);

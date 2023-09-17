@@ -52,8 +52,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class SenderSelectPopup extends ActionBarPopupWindow {
     public final static float SPRING_STIFFNESS = 750f;
@@ -143,7 +144,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
 
         List<TLRPC.TL_sendAsPeer> peers = sendAsPeers.peers;
 
-        if (ConfigManager.getBooleanOrFalse(Defines.quickToggleAnonymous)) {
+        if (Config.quickToggleAnonymous) {
             var chat = messagesController.getChat(chatFull.id);
             if (chat != null && chat.creator) {
                 if (peers.stream().noneMatch(peer -> peer.peer.channel_id == chat.id)) {
@@ -195,7 +196,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
                 }
 
                 final var currentChat = messagesController.getChat(chatFull.id);
-                final var isQuickToggleAnonymousEnabled = ConfigManager.getBooleanOrFalse(Defines.quickToggleAnonymous);
+                final var isQuickToggleAnonymousEnabled = Config.quickToggleAnonymous;
                 var flag = -1; // for private select check
                 if (currentChat.creator && isQuickToggleAnonymousEnabled) {
                     flag = currentChat.admin_rights.anonymous ? 0 : 1;

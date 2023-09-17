@@ -58,7 +58,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Timer;
 
-import top.qwq2333.nullgram.activity.GeneralSettingActivity;
+import xyz.nextalone.nnngram.activity.GeneralSettingActivity;
 
 
 public class LanguageSelectActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {

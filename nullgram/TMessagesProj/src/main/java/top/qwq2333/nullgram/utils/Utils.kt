@@ -26,27 +26,24 @@ import android.graphics.Typeface
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.os.Build
 import android.util.Base64
 import android.view.View
 import android.widget.Toast
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
-import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
 import org.telegram.tgnet.TLObject
-import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.ActionBar.ActionBarPopupWindow.ActionBarPopupWindowLayout
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.Components.AlertsCreator
 import org.telegram.ui.Components.BulletinFactory
+import top.qwq2333.gen.Config
 import top.qwq2333.nullgram.activity.DatacenterActivity
-import top.qwq2333.nullgram.config.ConfigManager
 import top.qwq2333.nullgram.remote.NicegramController
 import java.io.BufferedReader
 import java.io.File
@@ -59,18 +56,14 @@ import java.util.Locale
 
 
 object Utils {
+
     @JvmStatic
-    fun showForwardDate(obj: MessageObject, orig: CharSequence): String {
-        val date: Long = obj.messageOwner.fwd_from.date.toLong()
-        val day: String = LocaleController.formatDate(date)
-        val time: String = LocaleController.getInstance().formatterDay.format(date * 1000)
-        return if (!ConfigManager.getBooleanOrFalse(Defines.dateOfForwardedMsg) || date == 0L) {
-            orig.toString()
-        } else {
-            if (day == time) {
-                "$orig · $day"
-            } else "$orig · $day $time"
-        }
+    fun showForwardDate(obj: MessageObject, orig: CharSequence): String = if (Config.dateOfForwardedMsg &&
+        obj.messageOwner.fwd_from.date.toLong() != 0L
+    ) {
+        "$orig • ${LocaleController.formatDate(obj.messageOwner.fwd_from.date.toLong())}"
+    } else {
+        orig.toString()
     }
 
     @JvmStatic
@@ -138,7 +131,7 @@ object Utils {
                             if (font.lowercase(Locale.getDefault()).contains("emoji")) {
                                 val file = File("/system/fonts/$font")
                                 if (file.exists()) {
-                                    FileLog.d("emoji font file fonts.xml = $font")
+                                    Log.d("emoji font file fonts.xml = $font")
                                     return file
                                 }
                             }
@@ -152,7 +145,7 @@ object Utils {
                 }
             }
         } catch (e: Exception) {
-            FileLog.e(e)
+            Log.e(e)
         }
         return null
     }
@@ -173,9 +166,6 @@ object Utils {
 
     @JvmStatic
     fun isVPNEnabled(): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return false
-        }
         runCatching {
             val connectivityManager = ApplicationLoader.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val network = connectivityManager.activeNetwork
@@ -205,8 +195,7 @@ object Utils {
                     if ((SharedConfig.proxyEnabled && vpn) || (!SharedConfig.proxyEnabled && !vpn)) {
                         SharedConfig.setProxyEnable(!vpn)
                         UIUtil.runOnUIThread {
-                            NotificationCenter.getGlobalInstance()
-                                .postNotificationName(NotificationCenter.proxySettingsChanged)
+                            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged)
                         }
                     }
                 }
@@ -254,7 +243,7 @@ object Utils {
         val popupWindow = AlertsCreator.createSimplePopup(fragment, popupLayout, anchorView, x, y)
         if (id != 0L) {
             ActionBarMenuItem.addItem(popupLayout, R.drawable.msg_copy, LocaleController.getString("CopyID", R.string.CopyID), false, fragment.resourceProvider)
-                .setOnClickListener { v: View? ->
+                .setOnClickListener {
                     popupWindow.dismiss()
                     AndroidUtilities.addToClipboard(id.toString())
                     BulletinFactory.of(fragment).createCopyBulletin(LocaleController.formatString("TextCopied", R.string.TextCopied)).show()
@@ -269,7 +258,7 @@ object Utils {
                 fragment.resourceProvider
             )
             subItem.setSubtext(MessageUtils.formatDCString(dc))
-            subItem.setOnClickListener { v: View? ->
+            subItem.setOnClickListener {
                 popupWindow.dismiss()
                 fragment.presentFragment(DatacenterActivity(dc))
             }
@@ -307,152 +296,18 @@ object Utils {
         }
     }
 
-    @JvmStatic
-    fun generateMessageEntity(entity: TLRPC.MessageEntity, targetOffset: Int, targetLength: Int): TLRPC.MessageEntity = when(entity) {
-        is TLRPC.TL_messageEntityTextUrl -> TLRPC.TL_messageEntityTextUrl().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityBotCommand -> TLRPC.TL_messageEntityBotCommand().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityEmail -> TLRPC.TL_messageEntityEmail().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityPre -> TLRPC.TL_messageEntityPre().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityUnknown -> TLRPC.TL_messageEntityUnknown().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityUrl -> TLRPC.TL_messageEntityUrl().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityItalic -> TLRPC.TL_messageEntityItalic().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityMention -> TLRPC.TL_messageEntityMention().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntitySpoiler -> TLRPC.TL_messageEntitySpoiler().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityMentionName_layer131 -> TLRPC.TL_messageEntityMentionName_layer131().apply {
-            user_id = entity.user_id
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityAnimatedEmoji -> TLRPC.TL_messageEntityAnimatedEmoji().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityCashtag -> TLRPC.TL_messageEntityCashtag().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityBold -> TLRPC.TL_messageEntityBold().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityHashtag -> TLRPC.TL_messageEntityHashtag().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityCode -> TLRPC.TL_messageEntityCode().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityStrike -> TLRPC.TL_messageEntityStrike().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityBlockquote -> TLRPC.TL_messageEntityBlockquote().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityUnderline -> TLRPC.TL_messageEntityUnderline().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityBankCard -> TLRPC.TL_messageEntityBankCard().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityPhone -> TLRPC.TL_messageEntityPhone().apply {
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityMentionName -> TLRPC.TL_messageEntityMentionName().apply {
-            user_id = entity.user_id
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_messageEntityCustomEmoji -> TLRPC.TL_messageEntityCustomEmoji().apply {
-            document_id = entity.document_id
-            document = entity.document
-            url = entity.url
-            language = entity.language
-            offset = targetOffset
-            length = targetLength
-        }
-        is TLRPC.TL_inputMessageEntityMentionName -> TLRPC.TL_inputMessageEntityMentionName().apply {
-            user_id = entity.user_id
-            offset = targetOffset
-            length = targetLength
-        }
-        else -> throw NullPointerException("Unknown entity type: ${entity::class.java.simpleName}")
-    }
-
 }
 
 fun String.encodeUrl(): String = URLEncoder.encode(this, "UTF-8")
+fun String.isNumber(): Boolean = try {
+    this.toLong()
+    true
+} catch (e: NumberFormatException) {
+    false
+}
+
+internal inline fun tryOrLog(block: () -> Unit) = runCatching {
+    block()
+}.onFailure {
+    Log.e(it)
+}

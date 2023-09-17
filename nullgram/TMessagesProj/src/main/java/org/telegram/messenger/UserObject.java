@@ -13,7 +13,7 @@ import android.text.TextUtils;
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.tgnet.TLRPC;
 
-import top.qwq2333.nullgram.utils.StringUtils;
+import xyz.nextalone.nnngram.utils.StringUtils;
 
 public class UserObject {
 
@@ -134,5 +134,9 @@ public class UserObject {
             }
         }
         return null;
+    }
+
+    public static boolean isService(long user_id) {
+        return user_id == 333000 || user_id == 777000 || user_id == 42777;
     }
 }

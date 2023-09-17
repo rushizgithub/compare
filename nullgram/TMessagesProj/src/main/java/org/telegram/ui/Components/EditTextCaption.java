@@ -53,8 +53,8 @@ import org.telegram.ui.ActionBar.Theme;
 
 import java.util.List;
 
-import top.qwq2333.nullgram.ui.sortList.items.TextStyleItems;
-import top.qwq2333.nullgram.ui.syntaxhighlight.SyntaxHighlight;
+import xyz.nextalone.nnngram.ui.sortList.items.TextStyleItems;
+import xyz.nextalone.nnngram.ui.syntaxhighlight.SyntaxHighlight;
 
 public class EditTextCaption extends EditTextBoldCursor {
 
@@ -141,6 +141,7 @@ public class EditTextCaption extends EditTextBoldCursor {
         TextStyleSpan.TextStyleRun run = new TextStyleSpan.TextStyleRun();
         run.flags |= TextStyleSpan.FLAG_STYLE_SPOILER;
         applyTextStyleToSelection(new TextStyleSpan(run));
+        invalidateSpoilers();
     }
 
     public void makeSelectedItalic() {

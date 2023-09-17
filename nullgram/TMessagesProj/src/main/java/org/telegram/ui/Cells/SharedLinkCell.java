@@ -59,8 +59,9 @@ import java.util.Locale;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class SharedLinkCell extends FrameLayout {
     private final static int SPOILER_TYPE_LINK = 0,
@@ -335,7 +336,7 @@ public class SharedLinkCell extends FrameLayout {
                         for (TLRPC.MessageEntity e : message.messageOwner.entities) {
                             int ss = e.offset, se = e.offset + e.length;
                             if (
-                                ConfigManager.getBooleanOrFalse(Defines.displaySpoilerMsgDirectly)
+                                Config.displaySpoilerMsgDirectly
                                     && e instanceof TLRPC.TL_messageEntitySpoiler && start <= se
                                     && end >= ss) {
                                 TextStyleSpan.TextStyleRun run = new TextStyleSpan.TextStyleRun();
@@ -484,7 +485,7 @@ public class SharedLinkCell extends FrameLayout {
         }
 
         if (viewType == VIEW_TYPE_GLOBAL_SEARCH) {
-            fromInfoLayout = ChatMessageCell.generateStaticLayout(FilteredSearchView.createFromInfoString(message), description2TextPaint, maxWidth, maxWidth, 0, desctiptionLines);
+            fromInfoLayout = ChatMessageCell.generateStaticLayout(FilteredSearchView.createFromInfoString(message, true, 2, description2TextPaint), description2TextPaint, maxWidth, maxWidth, 0, desctiptionLines);
             fromInfoLayoutEmojis = AnimatedEmojiSpan.update(AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, this, fromInfoLayoutEmojis, fromInfoLayout);
         }
 

@@ -24,9 +24,9 @@ import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
+import top.qwq2333.nullgram.translate.BaseTranslator
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
-import top.qwq2333.nullgram.translate.BaseTranslator
 
 object TelegramTranslator : BaseTranslator() {
     override suspend fun translateText(text: String, from: String, to: String): RequestResult {

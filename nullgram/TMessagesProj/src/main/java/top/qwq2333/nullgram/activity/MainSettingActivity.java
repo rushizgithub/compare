@@ -27,6 +27,7 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
@@ -53,12 +54,11 @@ import org.telegram.ui.LaunchActivity;
 import java.io.File;
 import java.util.ArrayList;
 
+import top.qwq2333.gen.Config;
 import top.qwq2333.nullgram.config.ConfigManager;
 import top.qwq2333.nullgram.helpers.PasscodeHelper;
 import top.qwq2333.nullgram.utils.AlertUtil;
-import top.qwq2333.nullgram.utils.Defines;
 import top.qwq2333.nullgram.utils.FileUtils;
-import top.qwq2333.nullgram.utils.JsonUtils;
 import top.qwq2333.nullgram.utils.Log;
 import top.qwq2333.nullgram.utils.PermissionUtils;
 import top.qwq2333.nullgram.utils.ShareUtil;
@@ -96,7 +96,7 @@ public class MainSettingActivity extends BaseActivity {
 
     @Override
     protected String getActionBarTitle() {
-        return LocaleController.getString("NnnSettings", R.string.NullSettings);
+        return LocaleController.getString("NullSettings", R.string.NullSettings);
     }
 
     @Override
@@ -111,9 +111,9 @@ public class MainSettingActivity extends BaseActivity {
         } else if (position == channelRow) {
             MessagesController.getInstance(currentAccount).openByUserName(LocaleController.getString("OfficialChannelName", R.string.OfficialChannelName), this, 1);
         } else if (position == websiteRow) {
-            Browser.openUrl(getParentActivity(), "https://nextalone.xyz");
+            Browser.openUrl(getParentActivity(), "https://qwq2333.top");
         } else if (position == sourceCodeRow) {
-            Browser.openUrl(getParentActivity(), "https://github.com/PreviousAlone/nnngram");
+            Browser.openUrl(getParentActivity(), "https://github.com/qwq233/Nullgram");
         } else if (position == licenseRow) {
             presentFragment(new LicenseActivity());
         } else if (position == updateRow) {
@@ -128,7 +128,7 @@ public class MainSettingActivity extends BaseActivity {
         if (position == experimentRow) {
             pressCount++;
             if (pressCount >= 2) {
-                ConfigManager.toggleBoolean(Defines.showHiddenSettings);
+                Config.toggleShowHiddenSettings();
                 AndroidUtilities.shakeView(view);
                 return true;
             }
@@ -277,7 +277,7 @@ public class MainSettingActivity extends BaseActivity {
                     if (position == channelRow) {
                         textCell.setTextAndValue(LocaleController.getString("OfficialChannel", R.string.OfficialChannel), "@" + LocaleController.getString("OfficialChannelName", R.string.OfficialChannelName), true);
                     } else if (position == websiteRow) {
-                        textCell.setTextAndValue(LocaleController.getString("OfficialSite", R.string.OfficialSite), "nextalone.xyz", true);
+                        textCell.setTextAndValue(LocaleController.getString("OfficialSite", R.string.OfficialSite), "qwq2333.top", true);
                     } else if (position == sourceCodeRow) {
                         textCell.setTextAndValue(LocaleController.getString("ViewSourceCode", R.string.ViewSourceCode), "GitHub", true);
                     } else if (position == licenseRow) {
@@ -324,7 +324,7 @@ public class MainSettingActivity extends BaseActivity {
     private void backupSettings() {
 
         try {
-            File cacheFile = new File(ApplicationLoader.applicationContext.getCacheDir(), DateFormat.format("yyyyMMdd", System.currentTimeMillis()) + "-nnngram-settings.json");
+            File cacheFile = new File(ApplicationLoader.applicationContext.getCacheDir(), DateFormat.format("yyyyMMdd", System.currentTimeMillis()) + "-nullgram-settings.json");
             FileUtils.writeUtf8String(ConfigManager.exportConfigurationToJson(), cacheFile);
             ShareUtil.shareFile(getParentActivity(), cacheFile);
         } catch (JSONException e) {
@@ -344,7 +344,7 @@ public class MainSettingActivity extends BaseActivity {
     public static void importSettingsConfirmed(Context context, File settingsFile) {
 
         try {
-            JsonObject configJson = JsonUtils.toJsonObject(FileUtils.readUtf8String(settingsFile));
+            JsonObject configJson = new Gson().fromJson(FileUtils.readUtf8String(settingsFile), JsonObject.class);
             ConfigManager.importSettings(configJson);
 
             AlertDialog restart = new AlertDialog(context, 0);

@@ -188,12 +188,12 @@
  -keep,allowshrinking,allowobfuscation class org.telegram.ui.Components.Premium.GLIcon.ObjLoader {
      public <init>();
   }
--keepclassmembernames class top.qwq2333.nullgram.activity.DatacenterActivity$DatacenterCell { <fields>; }
--keepclassmembernames class top.qwq2333.nullgram.activity.DatacenterActivity$DatacenterHeaderCell { <fields>; }
--keepclassmembernames class top.qwq2333.nullgram.activity.MessageDetailsActivity$TextDetailSimpleCell { <fields>; }
--keepclassmembernames class top.qwq2333.nullgram.activity.PasscodeSettingActivity$AccountCell {
+-keepclassmembernames class xyz.nextalone.nnngram.activity.DatacenterActivity$DatacenterCell { <fields>; }
+-keepclassmembernames class xyz.nextalone.nnngram.activity.DatacenterActivity$DatacenterHeaderCell { <fields>; }
+-keepclassmembernames class xyz.nextalone.nnngram.activity.MessageDetailsActivity$TextDetailSimpleCell { <fields>; }
+-keepclassmembernames class xyz.nextalone.nnngram.activity.PasscodeSettingActivity$AccountCell {
 <fields>; }
--keepclassmembernames class top.qwq2333.nullgram.activityChatSettingsActivity$StickerSizeCell { <fields>; }
+-keepclassmembernames class xyz.nextalone.nnngram.activityChatSettingsActivity$StickerSizeCell { <fields>; }
 
 -keepclassmembernames class androidx.core.widget.NestedScrollView {
     private android.widget.OverScroller mScroller;

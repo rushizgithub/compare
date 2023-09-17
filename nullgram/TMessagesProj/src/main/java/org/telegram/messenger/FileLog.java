@@ -17,7 +17,7 @@ import org.telegram.tgnet.TLRPC;
 import java.io.File;
 import java.io.OutputStreamWriter;
 
-import top.qwq2333.nullgram.utils.Log;
+import xyz.nextalone.nnngram.utils.Log;
 
 /**
  * @deprecated use {@link Log} instead
@@ -26,6 +26,7 @@ import top.qwq2333.nullgram.utils.Log;
 public class FileLog {
     private OutputStreamWriter streamWriter = null;
     private FastDateFormat dateFormat = null;
+    private FastDateFormat fileDateFormat = null;
     private DispatchQueue logQueue = null;
 
     private File currentFile = null;
@@ -67,6 +68,10 @@ public class FileLog {
     public static void dumpUnparsedMessage(TLObject message, long messageId) {
         return;
     }
+
+    private static void checkGson() {
+    }
+
 
 
     public void init() {

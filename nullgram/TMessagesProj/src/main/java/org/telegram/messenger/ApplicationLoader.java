@@ -29,7 +29,6 @@ import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 
 import androidx.annotation.NonNull;
-import androidx.multidex.MultiDex;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -43,7 +42,7 @@ import org.telegram.ui.LauncherIconController;
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
 
-import top.qwq2333.nullgram.utils.AnalyticsUtils;
+import xyz.nextalone.nnngram.utils.AnalyticsUtils;
 
 public class ApplicationLoader extends Application {
 
@@ -78,7 +77,6 @@ public class ApplicationLoader extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        MultiDex.install(this);
     }
 
     public static ILocationServiceProvider getLocationServiceProvider() {
@@ -146,7 +144,7 @@ public class ApplicationLoader extends Application {
         } catch (Exception e) {
             FileLog.e(e);
         }
-        return new File("/data/data/top.qwq2333.nullgram/files");
+        return new File("/data/data/xyz.nextalone.nnngram/files");
     }
 
     public static void postInitApplication() {
@@ -556,6 +554,14 @@ public class ApplicationLoader extends Application {
     }
 
     protected void startAppCenterInternal(Activity context) {
+
+    }
+
+    public static void logDualCamera(boolean success, boolean vendor) {
+        applicationLoaderInstance.logDualCameraInternal(success, vendor);
+    }
+
+    protected void logDualCameraInternal(boolean success, boolean vendor) {
 
     }
 
