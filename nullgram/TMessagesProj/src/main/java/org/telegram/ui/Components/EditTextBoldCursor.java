@@ -60,7 +60,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import xyz.nextalone.gen.Config;
+import top.qwq2333.gen.Config;
 
 public class EditTextBoldCursor extends EditTextEffects {
 

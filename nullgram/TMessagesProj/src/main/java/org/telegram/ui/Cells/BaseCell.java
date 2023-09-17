@@ -15,7 +15,7 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
-import xyz.nextalone.gen.Config;
+import top.qwq2333.gen.Config;
 
 public abstract class BaseCell extends ViewGroup {
 

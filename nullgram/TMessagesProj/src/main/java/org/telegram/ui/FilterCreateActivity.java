@@ -92,8 +92,8 @@ import org.telegram.ui.Components.UndoView;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import xyz.nextalone.nnngram.helpers.FolderIconHelper;
-import xyz.nextalone.nnngram.ui.IconSelector;
+import top.qwq2333.nullgram.helpers.FolderIconHelper;
+import top.qwq2333.nullgram.ui.IconSelector;
 
 public class FilterCreateActivity extends BaseFragment {
 

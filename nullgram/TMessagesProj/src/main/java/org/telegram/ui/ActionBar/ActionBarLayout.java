@@ -65,9 +65,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import xyz.nextalone.gen.Config;
-import xyz.nextalone.nnngram.utils.VibrationUtils;
-import xyz.nextalone.nnngram.utils.VibrationUtils;
+import top.qwq2333.gen.Config;
+import top.qwq2333.nullgram.utils.VibrationUtils;
 
 public class ActionBarLayout extends FrameLayout implements INavigationLayout, FloatingDebugProvider {
 

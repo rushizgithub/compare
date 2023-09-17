@@ -133,8 +133,6 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 
-import java.lang.reflect.Array;
-import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.AnimationNotificationsLocker;
 import org.telegram.messenger.ApplicationLoader;
@@ -273,13 +271,13 @@ import java.util.Map;
 import java.util.Objects;
 
 import kotlin.Unit;
-import xyz.nextalone.gen.Config;
-import xyz.nextalone.nnngram.config.ConfigManager;
-import xyz.nextalone.nnngram.helpers.QrHelper;
-import xyz.nextalone.nnngram.helpers.TranslateHelper;
-import xyz.nextalone.nnngram.utils.Defines;
-import xyz.nextalone.nnngram.utils.Log;
-import xyz.nextalone.nnngram.utils.MessageUtils;
+import top.qwq2333.gen.Config;
+import top.qwq2333.nullgram.config.ConfigManager;
+import top.qwq2333.nullgram.helpers.QrHelper;
+import top.qwq2333.nullgram.helpers.TranslateHelper;
+import top.qwq2333.nullgram.utils.Defines;
+import top.qwq2333.nullgram.utils.Log;
+import top.qwq2333.nullgram.utils.MessageUtils;
 
 @SuppressLint("WrongConstant")
 @SuppressWarnings("unchecked")
@@ -783,7 +781,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     private ActionBarMenuItem shareItem;
     private ActionBarMenuSubItem qrItem;
     private ActionBarMenuSubItem translateItem;
-    private ActionBarMenuSubItem copyItem;
     private AlertDialog progressDialog;
     private LinearLayout itemsLayout;
     ChooseSpeedLayout chooseSpeedLayout;
@@ -1789,8 +1786,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     private final static int gallery_menu_speed = 19;
     private final static int gallery_menu_qr = 84;
     private final static int gallery_menu_translate = 91;
-    private final static int gallery_menu_save_messages = 92;
-    private final static int gallery_menu_copy_photo = 93;
 
     private final static int gallery_menu_paint = 20;
 
@@ -2909,7 +2904,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         }
 
         private ArrayList<Rect> exclusionRects;
-
+        
         public void updateExclusionRects() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 if (exclusionRects == null) {
@@ -5350,15 +5345,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     translateCaption();
                 } else if (id == gallery_menu_qr) {
                     QrHelper.showQrDialog(parentFragment, resourcesProvider, qrResults, true);
-                } else if (id == gallery_menu_save_messages) {
-                    var accountInstance = AccountInstance.getInstance(currentAccount);
-                    accountInstance.getSendMessagesHelper().sendMessage(new ArrayList<>(Collections.singletonList(currentMessageObject)),accountInstance.getUserConfig().getClientUserId(),false, false, true, 0);
-                } else if (id == gallery_menu_copy_photo) {
-                    MessageUtils.getInstance(currentAccount).addMessageToClipboard(currentMessageObject, () -> {
-                        if (BulletinFactory.canShowBulletin(parentFragment)) {
-                            BulletinFactory.of(parentFragment).createCopyBulletin(LocaleController.getString("PhotoCopied", R.string.PhotoCopied)).show();
-                        }
-                    });
                 }
             }
 
@@ -5439,8 +5425,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         menuItem.addSubItem(gallery_menu_save, R.drawable.msg_gallery, LocaleController.getString("SaveToGallery", R.string.SaveToGallery)).setColors(0xfffafafa, 0xfffafafa);
         //menuItem.addSubItem(gallery_menu_edit_avatar, R.drawable.photo_paint, LocaleController.getString("EditPhoto", R.string.EditPhoto)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_set_as_main, R.drawable.msg_openprofile, LocaleController.getString("SetAsMain", R.string.SetAsMain)).setColors(0xfffafafa, 0xfffafafa);
-        menuItem.addSubItem(gallery_menu_save_messages, R.drawable.msg_saved, LocaleController.getString("SaveMessages", R.string.saveMessages)).setColors(0xfffafafa, 0xfffafafa);
-        menuItem.addSubItem(gallery_menu_copy_photo, R.drawable.msg_copy, LocaleController.getString("CopyPhoto", R.string.CopyPhoto)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_delete, R.drawable.msg_delete, LocaleController.getString("Delete", R.string.Delete)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_cancel_loading, R.drawable.msg_cancel, LocaleController.getString("StopDownload", R.string.StopDownload)).setColors(0xfffafafa, 0xfffafafa);
         translateItem = menuItem.addSubItem(gallery_menu_translate, R.drawable.msg_translate, LocaleController.getString("TranslateMessage", R.string.TranslateMessage));
@@ -11940,7 +11924,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         }
         setMenuItemIcon(false, true);
 
-        boolean noforwards = !Config.ignoreChatStrict && messageObject != null && (MessagesController.getInstance(currentAccount).isChatNoForwards(messageObject.getChatId()) || (messageObject.messageOwner != null && messageObject.messageOwner.noforwards) || messageObject.hasRevealedExtendedMedia());
+        boolean noforwards = messageObject != null && (MessagesController.getInstance(currentAccount).isChatNoForwards(messageObject.getChatId()) || (messageObject.messageOwner != null && messageObject.messageOwner.noforwards) || messageObject.hasRevealedExtendedMedia());
         if (messageObject != null && messages == null) {
             if (messageObject.messageOwner != null && MessageObject.getMedia(messageObject.messageOwner) instanceof TLRPC.TL_messageMediaWebPage && MessageObject.getMedia(messageObject.messageOwner).webpage != null) {
                 TLRPC.WebPage webPage = MessageObject.getMedia(messageObject.messageOwner).webpage;
@@ -12284,7 +12268,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             actionBarContainer.setSubtitle(subtitle, animated);
 
             boolean isInvoice = newMessageObject.isInvoice();
-            boolean noforwards = !Config.ignoreChatStrict && MessagesController.getInstance(currentAccount).isChatNoForwards(newMessageObject.getChatId()) || (newMessageObject.messageOwner != null && newMessageObject.messageOwner.noforwards) || newMessageObject.hasRevealedExtendedMedia();
+            boolean noforwards = MessagesController.getInstance(currentAccount).isChatNoForwards(newMessageObject.getChatId()) || (newMessageObject.messageOwner != null && newMessageObject.messageOwner.noforwards) || newMessageObject.hasRevealedExtendedMedia();
             if (isVideo) {
                 bottomLayout.setVisibility(View.VISIBLE);
                 bottomLayout.setTag(1);
@@ -12389,7 +12373,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             if (currentAnimation != null) {
                 menuItem.hideSubItem(gallery_menu_save);
                 menuItem.hideSubItem(gallery_menu_share);
-                menuItem.hideSubItem(gallery_menu_save_messages);
                 setItemVisible(editItem, false, animated);
                 if (!newMessageObject.canDeleteMessage(parentChatActivity != null && parentChatActivity.isInScheduleMode(), null)) {
                     menuItem.hideSubItem(gallery_menu_delete);
@@ -12484,8 +12467,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             if (DialogObject.isEncryptedDialog(currentDialogId) && !isEmbedVideo || noforwards) {
                 setItemVisible(sendItem, false, false);
             }
-                menuItem.showSubItem(gallery_menu_save);
-                menuItem.showSubItem(gallery_menu_save_messages);
             if (isEmbedVideo || newMessageObject.messageOwner.ttl != 0 && newMessageObject.messageOwner.ttl < 60 * 60 || noforwards) {
                 allowShare = false;
                 menuItem.hideSubItem(gallery_menu_share);
@@ -12500,7 +12481,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             allowShare = false;
             menuItem.showSubItem(gallery_menu_delete);
             menuItem.hideSubItem(gallery_menu_save);
-            menuItem.showSubItem(gallery_menu_save_messages);
             if (countView != null) {
                 countView.updateShow(secureDocuments.size() > 1, true);
                 countView.set(switchingToIndex + 1, secureDocuments.size());
@@ -12546,9 +12526,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             } else if (isEvent) {
                 title = LocaleController.getString("AttachPhoto", R.string.AttachPhoto);
             }
-            boolean noforwards = !Config.ignoreChatStrict && avatarsDialogId != 0 && MessagesController.getInstance(currentAccount).isChatNoForwards(-avatarsDialogId);
+            boolean noforwards = avatarsDialogId != 0 && MessagesController.getInstance(currentAccount).isChatNoForwards(-avatarsDialogId);
             menuItem.showSubItem(gallery_menu_save);
-            menuItem.showSubItem(gallery_menu_save_messages);
+
             allowShare = !noforwards;
             menuItem.showSubItem(gallery_menu_share);
             menuItem.checkHideMenuItem();
@@ -12763,7 +12743,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             if (switchingToIndex < 0 || switchingToIndex >= size) {
                 return;
             }
-            allowShare = Config.ignoreChatStrict || !MessagesController.getInstance(currentAccount).isChatNoForwards(-currentDialogId) && (currentMessageObject == null || !currentMessageObject.hasRevealedExtendedMedia());
+            allowShare = !MessagesController.getInstance(currentAccount).isChatNoForwards(-currentDialogId) && (currentMessageObject == null || !currentMessageObject.hasRevealedExtendedMedia());
             TLRPC.PageBlock pageBlock = pageBlocksAdapter.get(switchingToIndex);
             caption = pageBlocksAdapter.getCaption(switchingToIndex);
             isVideo = pageBlocksAdapter.isVideo(switchingToIndex);
@@ -12795,7 +12775,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
             if (currentAnimation != null || (!pageBlocksAdapter.isVideo(index) && pageBlocksAdapter.isHardwarePlayer(index))) {
                 menuItem.hideSubItem(gallery_menu_save);
-                menuItem.hideSubItem(gallery_menu_save_messages);
                 if (allowShare) {
                     menuItem.showSubItem(gallery_menu_savegif);
                 } else {
@@ -12812,7 +12791,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     }
                 }
                 menuItem.showSubItem(gallery_menu_save);
-                menuItem.showSubItem(gallery_menu_save_messages);
                 menuItem.hideSubItem(gallery_menu_savegif);
                 menuItem.checkHideMenuItem();
             }
@@ -12940,9 +12918,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             currentMessageObject = newMessageObject;
             isVideo = newMessageObject.isVideo();
             if (sharedMediaType == MediaDataController.MEDIA_FILE) {
-                menuItem.showSubItem(gallery_menu_save);
-                menuItem.showSubItem(gallery_menu_save_messages);
-                setDoubleTapEnabled(true);
+                if (canZoom = newMessageObject.canPreviewDocument()) {
+                    menuItem.showSubItem(gallery_menu_save);
+                    setDoubleTapEnabled(true);
+                } else {
+                    menuItem.hideSubItem(gallery_menu_save);
+                    setDoubleTapEnabled(false);
+                }
             }
             if (isVideo || isEmbedVideo) {
                 speedItem.setVisibility(View.VISIBLE);
@@ -17172,7 +17154,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     public boolean onDown(MotionEvent e) {
         if (!doubleTap && checkImageView.getVisibility() != View.VISIBLE && !drawPressedDrawable[0] && !drawPressedDrawable[1]) {
             float x = e.getX();
-            int side = Config.disablePhotoSideAction ? 0 : Math.min(135, containerView.getMeasuredWidth() / 8);
+            int side = Math.min(135, containerView.getMeasuredWidth() / 8);
             if (x < side) {
                 if (leftImage.hasImageSet()) {
                     drawPressedDrawable[0] = true;
@@ -17192,7 +17174,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     public boolean canDoubleTap(MotionEvent e) {
         if (checkImageView.getVisibility() != View.VISIBLE && !drawPressedDrawable[0] && !drawPressedDrawable[1]) {
             float x = e.getX();
-            int side = Config.disablePhotoSideAction ? 0 : Math.min(135, containerView.getMeasuredWidth() / 8);
+            int side = Math.min(135, containerView.getMeasuredWidth() / 8);
             if (x < side || x > containerView.getMeasuredWidth() - side) {
                 return currentMessageObject == null || (currentMessageObject.isVideo() || photoViewerWebView != null && photoViewerWebView.isControllable()) && (SystemClock.elapsedRealtime() - lastPhotoSetTime) >= 500 && canDoubleTapSeekVideo(e);
             }
@@ -17290,7 +17272,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         float y = e.getY();
         if (checkImageView.getVisibility() != View.VISIBLE) {
             if (SharedConfig.nextMediaTap && y > ActionBar.getCurrentActionBarHeight() + AndroidUtilities.statusBarHeight + AndroidUtilities.dp(40)) {
-                int side = ConfigManager.getBooleanOrFalse(Defines.disablePhotoSideAction) ? 0 : Math.min(135, containerView.getMeasuredWidth() / 8);
+                int side = Math.min(135, containerView.getMeasuredWidth() / 8);
                 if (x < side) {
                     if (leftImage.hasImageSet()) {
                         switchToNextIndex(-1, true);

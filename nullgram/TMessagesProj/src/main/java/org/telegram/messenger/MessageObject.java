@@ -76,9 +76,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import xyz.nextalone.gen.Config;
-import xyz.nextalone.nnngram.ui.syntaxhighlight.SyntaxHighlight;
-import xyz.nextalone.nnngram.utils.StringUtils;
+import top.qwq2333.gen.Config;
+import top.qwq2333.nullgram.ui.syntaxhighlight.SyntaxHighlight;
+import top.qwq2333.nullgram.utils.StringUtils;
 
 public class MessageObject {
 
@@ -4063,8 +4063,6 @@ public class MessageObject {
 
         if (messageText == null) {
             messageText = "";
-        } else {
-            messageText = StringUtils.zalgoFilter(messageText);
         }
     }
 

@@ -35,7 +35,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
-import xyz.nextalone.nnngram.utils.PermissionUtils;
+import top.qwq2333.nullgram.utils.PermissionUtils;
 
 public class WallpaperUpdater {
 
