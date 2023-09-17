@@ -20,6 +20,8 @@ jobs:
          git clone --depth 1 https://github.com/qwq233/Nullgram -b master nullgram
          cd nullgram && rm -rf .git && cd -
          ls nullgram
+         git add --all nullgram/*
+         git commit -m "nullgram"
          git clone --depth 1 https://github.com/PreviousAlone/Nnngram -b main nnngram
          cd nnngram && rm -rf .git && cd -
          ls nnngram
@@ -29,5 +31,5 @@ jobs:
          git config user.email "your.email@example.com"
          git status
          git add --all nullgram/*
-         git commit -m "Compare repositories"
+         git commit -m "nnngram"
          git push
