@@ -44,7 +44,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import top.qwq2333.gen.Config;
+import xyz.nextalone.gen.Config;
 
 public class LocaleController {
 
@@ -1144,10 +1144,12 @@ public class LocaleController {
             value = "LOC_ERR:" + key;
         }
 
-        if (value.contains("Telegram"))
-            value = value.replace("Telegram", "Nullgram");
+//        if (value.contains("Telegram"))
+//            value = value.replace("Telegram", "Nnngram");
         if (value.contains("TELEOFFICIAL"))
             value = value.replace("TELEOFFICIAL", "Telegram");
+        if (value.contains("Nullgram"))
+            value = value.replace("Nullgram", "Nnngram");
         return value;
     }
 
@@ -1282,11 +1284,14 @@ public class LocaleController {
                 }
             }
 
-            if (value.contains("Telegram")) {
-                value = value.replace("Telegram", "Nullgram");
-            }
+//            if (value.contains("Telegram")) {
+//                value = value.replace("Telegram", "Nullgram");
+//            }
             if (value.contains("TELEOFFICIAL")) {
                 value = value.replace("TELEOFFICIAL", "Telegram");
+            }
+            if (value.contains("Nullgram")) {
+                value = value.replace("Nullgram", "Nnngram");
             }
 
             if (getInstance().currentLocale != null) {
