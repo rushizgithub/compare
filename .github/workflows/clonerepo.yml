@@ -26,6 +26,8 @@ jobs:
          git commit -m "nullgram"
          git clone --depth 1 https://github.com/PreviousAlone/Nnngram -b main nnngram
          cd nnngram && rm -rf .git
+         mkdir TMessagesProj/src/main/java/top
+         mkdir TMessagesProj/src/main/java/top/qwq2333
          mkdir TMessagesProj/src/main/java/top/qwq2333/nullgram
          mv TMessagesProj/src/main/java/xyz/nextalone/nnngram TMessagesProj/src/main/java/top/qwq2333/nullgram
          cd -
