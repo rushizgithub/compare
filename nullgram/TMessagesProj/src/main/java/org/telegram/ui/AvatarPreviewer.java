@@ -43,7 +43,7 @@ import org.telegram.ui.Components.AnimatedFileDrawable;
 import org.telegram.ui.Components.MediaActionDrawable;
 import org.telegram.ui.Components.RadialProgress2;
 
-import xyz.nextalone.gen.Config;
+import top.qwq2333.gen.Config;
 
 public class AvatarPreviewer {
 

@@ -164,7 +164,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 
-import xyz.nextalone.gen.Config;
+import top.qwq2333.gen.Config;
 
 public class PeerStoriesView extends SizeNotifierFrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
@@ -2437,7 +2437,7 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
         );
         buttonTextView.setOnClickListener(v -> {
             if (LaunchActivity.instance != null) {
-//                LaunchActivity.instance.checkAppUpdate(true);
+                LaunchActivity.instance.checkAppUpdate(true);
             }
         });
         linearLayout.addView(textView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));

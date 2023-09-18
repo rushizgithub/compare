@@ -70,7 +70,7 @@ import org.telegram.ui.Components.SuggestEmojiView;
 
 import java.util.ArrayList;
 
-import xyz.nextalone.gen.Config;
+import top.qwq2333.gen.Config;
 
 public class ContentPreviewViewer {
 

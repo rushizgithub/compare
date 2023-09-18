@@ -57,9 +57,9 @@ import org.telegram.ui.Stories.StoryViewer;
 
 import java.util.ArrayList;
 
-import xyz.nextalone.gen.Config;
-import xyz.nextalone.nnngram.utils.MessageUtils;
-import xyz.nextalone.nnngram.utils.VibrationUtils;
+import top.qwq2333.gen.Config;
+import top.qwq2333.nullgram.utils.MessageUtils;
+import top.qwq2333.nullgram.utils.VibrationUtils;
 
 public abstract class BaseFragment {
 

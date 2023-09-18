@@ -74,8 +74,8 @@ import org.telegram.ui.ThemeActivity;
 
 import java.util.ArrayList;
 
-import xyz.nextalone.gen.Config;
-import xyz.nextalone.nnngram.utils.Log;
+import top.qwq2333.gen.Config;
+import top.qwq2333.nullgram.utils.Log;
 
 public class DrawerProfileCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
@@ -790,8 +790,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         } else if (!TextUtils.isEmpty(user.username)) {
             phoneTextView.setText("@" + user.username);
         } else {
-//            phoneTextView.setText(LocaleController.getString("MobileHidden", R.string.MobileHidden));
-            phoneTextView.setVisibility(GONE);
+            phoneTextView.setText(LocaleController.getString("MobileHidden", R.string.MobileHidden));
         }
         AvatarDrawable avatarDrawable = new AvatarDrawable(user);
         avatarDrawable.setColor(Theme.getColor(Theme.key_avatar_backgroundInProfileBlue));
