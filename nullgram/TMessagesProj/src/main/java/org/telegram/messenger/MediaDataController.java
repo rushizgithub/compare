@@ -91,8 +91,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.helpers.EntitiesHelper;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.helpers.EntitiesHelper;
 
 @SuppressWarnings("unchecked")
 public class MediaDataController extends BaseController {

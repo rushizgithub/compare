@@ -181,11 +181,11 @@ import java.util.Objects;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.StringUtils;
-import top.qwq2333.nullgram.utils.Utils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.StringUtils;
+import xyz.nextalone.nnngram.utils.Utils;
 
 public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate, ImageReceiver.ImageReceiverDelegate, DownloadController.FileDownloadProgressListener, TextSelectionHelper.SelectableView, NotificationCenter.NotificationCenterDelegate {
     private final static int TIME_APPEAR_MS = 200;
@@ -1421,6 +1421,30 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         if (roundVideoPlayingDrawable != null) {
             roundVideoPlayingDrawable.setResourcesProvider(resourcesProvider);
         }
+    }
+
+    public void drawStatusWithImage(Canvas canvas, ImageReceiver imageReceiver, int radius) {
+        String formatUserStatus = currentUser != null ? LocaleController.formatUserStatus(this.currentAccount, currentUser) : "";
+        if (!Config.showOnlineStatus || currentUser == null || currentUser.bot || !formatUserStatus.equals(LocaleController.getString("Online", R.string.Online))) {
+            imageReceiver.draw(canvas);
+            return;
+        }
+        int x = Math.round(imageReceiver.getImageX2());
+        int y = Math.round(imageReceiver.getImageY2());
+        int circleRadius = radius - AndroidUtilities.dp(2.25f);
+        int spaceLeft = radius - circleRadius;
+        int xCenterRegion = x - spaceLeft;
+        int yCenterRegion = y - spaceLeft;
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Theme.getColor(Theme.key_chats_onlineCircle));
+        canvas.save();
+        Path p = new Path();
+        p.addCircle(x - radius, y - radius, radius, Path.Direction.CW);
+        p.toggleInverseFillType();
+        canvas.clipPath(p);
+        imageReceiver.draw(canvas);
+        canvas.restore();
+        canvas.drawCircle(xCenterRegion - circleRadius, yCenterRegion - circleRadius, circleRadius, paint);
     }
 
     private void createPollUI() {
@@ -4296,7 +4320,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             drawVideoSize = false;
             canStreamVideo = false;
             animatingNoSound = 0;
-            if (MessagesController.getInstance(currentAccount).isChatNoForwards(messageObject.getChatId()) || (messageObject.messageOwner != null && messageObject.messageOwner.noforwards)) {
+            if (!Config.ignoreChatStrict && MessagesController.getInstance(currentAccount).isChatNoForwards(messageObject.getChatId()) || (messageObject.messageOwner != null && messageObject.messageOwner.noforwards)) {
                 drawSideButton = 0;
             } else {
                 drawSideButton = !isRepliesChat && checkNeedDrawShareButton(messageObject) && (currentPosition == null || currentPosition.last) ? 1 : 0;
@@ -12760,7 +12784,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 && currentChat != null && currentMessageObject.isSenderChannel()) {
                 if (Config.channelAlias) {
                     String aliasName = ConfigManager.getStringOrDefault(Defines.channelAliasPrefix
-                        + currentMessageObject.messageOwner.from_id.channel_id, null);
+                        + currentMessageObject.messageOwner.from_id.channel_id, "");
 
                     String nickname = null;
                     if (Config.linkedUser
@@ -12955,6 +12979,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     if (hasPsaHint) {
                         forwardedNameWidth -= AndroidUtilities.dp(36);
                     }
+                    currentForwardNameString = Utils.showForwardDate(messageObject, currentForwardNameString);
                     String from = LocaleController.getString("From", R.string.From);
                     String fromFormattedString = LocaleController.getString("FromFormatted", R.string.FromFormatted);
                     int idx = fromFormattedString.indexOf("%1$s");
@@ -13140,9 +13165,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     } else if (messageObject.customReplyName != null) {
                         name = messageObject.customReplyName;
                     } else {
-                        if (drawForwardedName) {
-                            name = messageObject.replyMessageObject.getForwardedName();
-                        }
+                        // if (drawForwardedName) {
+                        //     name = messageObject.replyMessageObject.getForwardedName();
+                        // }
 
                         if (name == null) {
                             long fromId = messageObject.replyMessageObject.getFromChatId();
