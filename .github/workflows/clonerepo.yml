@@ -29,7 +29,12 @@ jobs:
          mkdir TMessagesProj/src/main/java/top
          mkdir TMessagesProj/src/main/java/top/qwq2333
          mkdir TMessagesProj/src/main/java/top/qwq2333/nullgram
-         mv TMessagesProj/src/main/java/xyz/nextalone/nnngram TMessagesProj/src/main/java/top/qwq2333/nullgram
+         mv TMessagesProj/src/main/java/xyz/nextalone TMessagesProj/src/main/java/top/qwq2333/nullgram
+         mkdir libs/ksp/src/main/kotlin/top
+         mkdir libs/ksp/src/main/kotlin/top/qwq2333
+         mkdir libs/ksp/src/main/kotlin/top/qwq2333/nullgram
+         mv libs/ksp/src/main/kotlin/xyz/nextalone libs/ksp/src/main/kotlin/top/qwq2333/nullgram
+
          cd -
          ls nnngram
          cp -rf ./nnngram/. ./nullgram/
