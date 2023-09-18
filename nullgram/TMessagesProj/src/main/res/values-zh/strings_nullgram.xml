@@ -44,6 +44,8 @@
     <string name="formatterDay24HSec">HH:mm:ss</string>
     <string name="DeleteDownloadedFile">删除已缓存的文件</string>
     <string name="Repeat">复读</string>
+    <string name="RepeatAsCopy">无引用复读</string>
+    <string name="Reverse">反转</string>
     <string name="saveMessages">保存信息</string>
     <string name="ViewHistory">查看历史记录</string>
     <string name="NoQuoteForward">无引用转发</string>
@@ -60,7 +62,7 @@
     <string name="CreateMono">创建等宽文字</string>
     <string name="CreateMonoLanguage">语言代码</string>
     <string name="codeSyntaxHighlightDetails">感谢prismjs和Nekogram</string>
-    <string name="CreateMention">创建mention</string>
+    <string name="CreateMention">创建提及</string>
     <string name="Name">名称</string>
     <string name="channelAlias">频道别名</string>
     <string name="channelAliasDetails">要求“标记Channel用户”启用</string>
@@ -115,7 +117,7 @@
     <string name="ignoreReactionMentionInfo">它将自动将未读反应提及设置为已读。\n它还将同步到其他设备。\n通知仍将被显示，因为它由 TELEOFFICIAL 服务器控制。</string>
     <string name="StickerSize">贴纸大小</string>
     <string name="StickerSizeDialogMessageReplyTo">给我一些很不错的东西。</string>
-    <string name="StickerSizeDialogMessage">wow 真可爱</string>
+    <string name="StickerSizeDialogMessage">wow 是可爱的男孩子</string>
     <string name="ResetStickerSize">重置贴纸大小</string>
     <string name="EditUndo">撤消</string>
     <string name="EditRedo">重做</string>
@@ -304,4 +306,23 @@
     <string name="storyStealthMode">动态隐身模式</string>
     <string name="OneMoreThing">还有一件事</string>
     <string name="NotOriginalNullgramInfo">你似乎正在使用Nullgram的分支版本。\n你是否也要进入Nullgram的频道？</string>
+
+    <string name="AppIconColorful">缤纷</string>
+    <string name="AppIconDarkGreen">深翠</string>
+    <string name="AppIconNeon">霓虹</string>
+    <string name="doNotUnarchiveBySwipe">禁用滑动取消归档</string>
+    <string name="hideInputFieldBotButton">隐藏输入框机器人按钮</string>
+    <string name="hideMessageSeenTooltip">隐藏消息已读提示</string>
+    <string name="disableNotificationBubble">禁用通知气泡</string>
+    <string name="showOnlineStatus">显示在线状态</string>
+    <string name="disablePhotoSideAction">禁用点按切换图片</string>
+    <string name="MergeMessage">合并消息</string>
+    <string name="filterZalgo">过滤 \"Zalgo\" 符号</string>
+    <string name="ignoreFolderUnreadCount">忽略文件夹标签上的未读计数</string>
+    <string name="customTitle">自定义标题</string>
+    <string name="setCustomTitle">设置自定义标题</string>
+    <string name="deleteMessageForBoth">为双方删除消息</string>
+    <string name="drawerList">侧边栏列表</string>
+    <string name="TextStyleSettings">文本样式</string>
+    <string name="hideSendAsButton">隐藏发送者按钮</string>
 </resources>
