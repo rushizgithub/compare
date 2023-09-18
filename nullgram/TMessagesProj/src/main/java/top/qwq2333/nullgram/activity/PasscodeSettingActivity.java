@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.activity;
+package xyz.nextalone.nnngram.activity;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -64,7 +64,7 @@ import org.telegram.ui.PasscodeActivity;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import top.qwq2333.nullgram.helpers.PasscodeHelper;
+import xyz.nextalone.nnngram.helpers.PasscodeHelper;
 
 public class PasscodeSettingActivity extends BaseActivity {
     private boolean passcodeSet;
@@ -308,7 +308,7 @@ public class PasscodeSettingActivity extends BaseActivity {
                             cell.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                         }
                     } else if (position == showInSettings2Row) {
-                        var link = String.format(Locale.ENGLISH, "https://t.me/nullsetting/%s", PasscodeHelper.getSettingsKey());
+                        var link = String.format(Locale.ENGLISH, "https://t.me/nasettings/%s", PasscodeHelper.getSettingsKey());
                         var stringBuilder = new SpannableStringBuilder(AndroidUtilities.replaceTags(LocaleController.getString("PasscodeShowInSettingsAbout", R.string.PasscodeShowInSettingsAbout)));
                         stringBuilder.append("\n").append(link);
                         stringBuilder.setSpan(new URLSpanNoUnderline(null) {

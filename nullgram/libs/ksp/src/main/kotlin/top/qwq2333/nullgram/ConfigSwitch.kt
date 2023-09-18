@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram
+package xyz.nextalone.nnngram
 
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
@@ -42,11 +42,11 @@ class ConfigSwitchGenerator(
     private var finished = false
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val objectBuilder = TypeSpec.objectBuilder("Config")
-        val configManager = ClassName("top.qwq2333.nullgram.config", "ConfigManager")
-        val defines = ClassName("top.qwq2333.nullgram.utils", "Defines")
+        val configManager = ClassName("xyz.nextalone.nnngram.config", "ConfigManager")
+        val defines = ClassName("xyz.nextalone.nnngram.utils", "Defines")
         val dependencies = mutableListOf<KSFile>()
 
-        resolver.getSymbolsWithAnnotation("top.qwq2333.nullgram.BooleanConfig")
+        resolver.getSymbolsWithAnnotation("xyz.nextalone.nnngram.BooleanConfig")
             .filterIsInstance<KSPropertyDeclaration>()
             .toList()
             .let {
@@ -88,7 +88,7 @@ class ConfigSwitchGenerator(
                 }
             }
 
-        resolver.getSymbolsWithAnnotation("top.qwq2333.nullgram.IntConfig")
+        resolver.getSymbolsWithAnnotation("xyz.nextalone.nnngram.IntConfig")
             .filterIsInstance<KSPropertyDeclaration>()
             .toList()
             .let {
@@ -126,7 +126,7 @@ class ConfigSwitchGenerator(
                 }
             }
 
-        resolver.getSymbolsWithAnnotation("top.qwq2333.nullgram.StringConfig")
+        resolver.getSymbolsWithAnnotation("xyz.nextalone.nnngram.StringConfig")
             .filterIsInstance<KSPropertyDeclaration>()
             .toList()
             .let {
@@ -164,7 +164,7 @@ class ConfigSwitchGenerator(
                 }
             }
 
-        if (!finished) FileSpec.builder("top.qwq2333.gen", "Config")
+        if (!finished) FileSpec.builder("xyz.nextalone.gen", "Config")
             .addType(objectBuilder.build())
             .build()
             .writeTo(codeGenerator, Dependencies(true, *dependencies.toTypedArray()))

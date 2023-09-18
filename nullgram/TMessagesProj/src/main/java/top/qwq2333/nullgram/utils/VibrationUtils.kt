@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.utils
+package xyz.nextalone.nnngram.utils
 
 import android.content.Context
 import android.os.Build
@@ -27,7 +27,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
 import org.telegram.messenger.ApplicationLoader
-import top.qwq2333.gen.Config
+import xyz.nextalone.gen.Config
 
 object VibrationUtils {
     lateinit var vibrator: Vibrator

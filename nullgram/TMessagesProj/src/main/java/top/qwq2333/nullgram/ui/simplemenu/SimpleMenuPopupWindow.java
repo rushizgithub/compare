@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.ui.simplemenu;
+package xyz.nextalone.nnngram.ui.simplemenu;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 

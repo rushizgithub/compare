@@ -16,18 +16,18 @@
  *  If not, see
  * <https://www.gnu.org/licenses/>
  */
-package top.qwq2333.nullgram.helpers
+package xyz.nextalone.nnngram.helpers
 
 import androidx.core.util.Pair
 import org.tcp2ws.tcp2wsServer
 import org.telegram.messenger.BuildConfig
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
-import top.qwq2333.gen.Config
-import top.qwq2333.nullgram.config.ConfigManager
-import top.qwq2333.nullgram.utils.AnalyticsUtils.trackEvent
-import top.qwq2333.nullgram.utils.Defines
-import top.qwq2333.nullgram.utils.Log
+import xyz.nextalone.gen.Config
+import xyz.nextalone.nnngram.config.ConfigManager
+import xyz.nextalone.nnngram.utils.AnalyticsUtils.trackEvent
+import xyz.nextalone.nnngram.utils.Defines
+import xyz.nextalone.nnngram.utils.Log
 import java.net.ServerSocket
 
 object WebSocketHelper {
@@ -120,7 +120,7 @@ object WebSocketHelper {
                 val map = HashMap<String, String?>()
                 map["buildType"] = BuildConfig.BUILD_TYPE
                 map["buildFlavor"] = BuildConfig.FLAVOR
-                map["isPlay"] = BuildConfig.isPlay.toString()
+                map["isPlay"] = "false"
                 trackEvent("tcp2ws started", map)
             }
             Log.d("tcp2ws started on port " + socksPort)

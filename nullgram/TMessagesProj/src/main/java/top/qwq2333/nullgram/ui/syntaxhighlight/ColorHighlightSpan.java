@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.ui.syntaxhighlight;
+package xyz.nextalone.nnngram.ui.syntaxhighlight;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

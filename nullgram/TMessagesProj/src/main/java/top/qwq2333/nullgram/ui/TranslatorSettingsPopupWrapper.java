@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.ui;
+package xyz.nextalone.nnngram.ui;
 
 import android.view.View;
 import android.widget.FrameLayout;
@@ -32,7 +32,7 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.PopupSwipeBackLayout;
 
 import kotlin.Unit;
-import top.qwq2333.nullgram.helpers.TranslateHelper;
+import xyz.nextalone.nnngram.helpers.TranslateHelper;
 
 public class TranslatorSettingsPopupWrapper {
 

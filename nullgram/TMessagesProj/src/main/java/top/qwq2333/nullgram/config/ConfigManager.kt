@@ -16,7 +16,7 @@
  *  If not, see
  * <https://www.gnu.org/licenses/>
  */
-package top.qwq2333.nullgram.config
+package xyz.nextalone.nnngram.config
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -25,7 +25,7 @@ import com.google.gson.JsonPrimitive
 import org.json.JSONException
 import org.json.JSONObject
 import org.telegram.messenger.ApplicationLoader
-import top.qwq2333.nullgram.utils.Log
+import xyz.nextalone.nnngram.utils.Log
 import java.util.function.Function
 
 object ConfigManager {

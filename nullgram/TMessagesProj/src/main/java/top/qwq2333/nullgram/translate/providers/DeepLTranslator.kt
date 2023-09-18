@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.translate.providers
+package xyz.nextalone.nnngram.translate.providers
 
 import android.text.TextUtils
 import io.ktor.client.request.header
@@ -29,10 +29,10 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import org.json.JSONArray
 import org.json.JSONObject
-import top.qwq2333.nullgram.config.ConfigManager
-import top.qwq2333.nullgram.translate.BaseTranslator
-import top.qwq2333.nullgram.utils.Defines
-import top.qwq2333.nullgram.utils.Log
+import xyz.nextalone.nnngram.config.ConfigManager
+import xyz.nextalone.nnngram.translate.BaseTranslator
+import xyz.nextalone.nnngram.utils.Defines
+import xyz.nextalone.nnngram.utils.Log
 import java.io.IOException
 import java.util.Locale
 import java.util.UUID

@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.ui;
+package xyz.nextalone.nnngram.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -50,7 +50,7 @@ import org.telegram.ui.Components.StickerImageView;
 
 import java.util.Map;
 
-import top.qwq2333.gen.Config;
+import xyz.nextalone.gen.Config;
 
 @RequiresApi(api = Build.VERSION_CODES.S)
 public class AppLinkVerifyBottomSheet extends BottomSheet {

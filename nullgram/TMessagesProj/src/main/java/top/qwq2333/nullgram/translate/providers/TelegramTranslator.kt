@@ -17,16 +17,16 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.translate.providers
+package xyz.nextalone.nnngram.translate.providers
 
 import io.ktor.http.HttpStatusCode
 import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
-import top.qwq2333.nullgram.translate.BaseTranslator
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
+import xyz.nextalone.nnngram.translate.BaseTranslator
 
 object TelegramTranslator : BaseTranslator() {
     override suspend fun translateText(text: String, from: String, to: String): RequestResult {

@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.utils
+package xyz.nextalone.nnngram.utils
 
 import android.content.Context
 import android.util.Base64
@@ -34,7 +34,7 @@ import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.TLRPC.Chat
 import org.telegram.ui.ActionBar.AlertDialog
-import top.qwq2333.nullgram.config.ConfigManager
+import xyz.nextalone.nnngram.config.ConfigManager
 import java.util.Arrays
 
 object UpdateUtils {
@@ -279,7 +279,6 @@ object UpdateUtils {
 
     @JvmStatic
     fun checkUpdate(callback: (TLRPC.TL_help_appUpdate?, Boolean) -> Unit) {
-        if (BuildConfig.isPlay) return
         if (!UserConfig.getInstance(UserConfig.selectedAccount).isClientActivated) return
         val (apksChannelID, apksChannelName) = when (ConfigManager.getIntOrDefault(Defines.updateChannel, -1)) {
             Defines.stableChannel -> stableChannelAPKsID to stableChannelAPKsName

@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.ui
+package xyz.nextalone.nnngram.ui
 
 import android.content.Context
 import android.view.View
@@ -28,8 +28,8 @@ import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.RadioColorCell
-import top.qwq2333.nullgram.ui.simplemenu.SimpleMenuPopupWindow
-import top.qwq2333.nullgram.utils.Log
+import xyz.nextalone.nnngram.ui.simplemenu.SimpleMenuPopupWindow
+import xyz.nextalone.nnngram.utils.Log
 
 object PopupBuilder {
     private var mPopupWindow: SimpleMenuPopupWindow? = null

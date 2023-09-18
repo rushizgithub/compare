@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.activity;
+package xyz.nextalone.nnngram.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -51,7 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import top.qwq2333.nullgram.helpers.TranslateHelper;
+import xyz.nextalone.nnngram.helpers.TranslateHelper;
 
 public class LanguageSelectActivity extends BaseActivity {
 

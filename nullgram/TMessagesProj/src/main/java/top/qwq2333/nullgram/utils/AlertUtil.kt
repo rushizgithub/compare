@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.utils
+package xyz.nextalone.nnngram.utils
 
 import android.content.Context
 import android.widget.Toast
@@ -26,7 +26,7 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.AlertDialog
-import top.qwq2333.nullgram.ui.BottomBuilder
+import xyz.nextalone.nnngram.ui.BottomBuilder
 
 
 object AlertUtil {

@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.ui;
+package xyz.nextalone.nnngram.ui;
 
 import android.content.Context;
 import android.util.TypedValue;
@@ -38,7 +38,7 @@ import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.PopupSwipeBackLayout;
 
-import top.qwq2333.nullgram.config.DialogConfig;
+import xyz.nextalone.nnngram.config.DialogConfig;
 
 public class AutoTranslatePopupWrapper {
 

@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.activity;
+package xyz.nextalone.nnngram.activity;
 
 import android.content.Context;
 import android.util.TypedValue;
@@ -45,11 +45,11 @@ import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.LayoutHelper;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.helpers.WebSocketHelper;
-import top.qwq2333.nullgram.helpers.WebSocketHelper.WsProvider;
-import top.qwq2333.nullgram.ui.PopupBuilder;
-import top.qwq2333.nullgram.utils.Log;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.helpers.WebSocketHelper;
+import xyz.nextalone.nnngram.helpers.WebSocketHelper.WsProvider;
+import xyz.nextalone.nnngram.ui.PopupBuilder;
+import xyz.nextalone.nnngram.utils.Log;
 
 
 public class WsSettingsActivity extends BaseActivity {

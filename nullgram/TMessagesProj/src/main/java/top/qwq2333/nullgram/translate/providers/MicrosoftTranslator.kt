@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.translate.providers
+package xyz.nextalone.nnngram.translate.providers
 
 import android.text.TextUtils
 import android.util.Base64
@@ -32,9 +32,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.json.JSONArray
-import top.qwq2333.nullgram.translate.BaseTranslator
-import top.qwq2333.nullgram.utils.Log
-import top.qwq2333.nullgram.utils.encodeUrl
+import xyz.nextalone.nnngram.translate.BaseTranslator
+import xyz.nextalone.nnngram.utils.Log
+import xyz.nextalone.nnngram.utils.encodeUrl
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar

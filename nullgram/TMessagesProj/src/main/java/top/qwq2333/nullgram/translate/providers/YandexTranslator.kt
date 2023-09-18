@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.translate.providers
+package xyz.nextalone.nnngram.translate.providers
 
 import io.ktor.client.request.header
 import io.ktor.client.request.post
@@ -27,9 +27,9 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import org.json.JSONObject
-import top.qwq2333.nullgram.translate.BaseTranslator
-import top.qwq2333.nullgram.utils.Log
-import top.qwq2333.nullgram.utils.encodeUrl
+import xyz.nextalone.nnngram.translate.BaseTranslator
+import xyz.nextalone.nnngram.utils.Log
+import xyz.nextalone.nnngram.utils.encodeUrl
 import java.io.IOException
 import java.util.UUID
 

@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.remote
+package xyz.nextalone.nnngram.remote
 
 import androidx.collection.LruCache
 import io.ktor.client.call.body
@@ -40,7 +40,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import top.qwq2333.nullgram.utils.Log
+import xyz.nextalone.nnngram.utils.Log
 
 object NicegramController : BaseController() {
     override val baseUrl = "https://restore-access.indream.app"

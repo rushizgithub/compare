@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.translate;
+package xyz.nextalone.nnngram.translate;
 
 import android.view.View;
 

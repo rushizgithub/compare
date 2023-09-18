@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.ui;
+package xyz.nextalone.nnngram.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;

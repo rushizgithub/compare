@@ -17,10 +17,10 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.ui.simplemenu;
+package xyz.nextalone.nnngram.ui.simplemenu;
 
-import static top.qwq2333.nullgram.ui.simplemenu.SimpleMenuPopupWindow.DIALOG;
-import static top.qwq2333.nullgram.ui.simplemenu.SimpleMenuPopupWindow.HORIZONTAL;
+import static xyz.nextalone.nnngram.ui.simplemenu.SimpleMenuPopupWindow.DIALOG;
+import static xyz.nextalone.nnngram.ui.simplemenu.SimpleMenuPopupWindow.HORIZONTAL;
 
 import android.os.Build;
 import android.view.View;

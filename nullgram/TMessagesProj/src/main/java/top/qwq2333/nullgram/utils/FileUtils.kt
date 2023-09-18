@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.utils
+package xyz.nextalone.nnngram.utils
 
 import org.telegram.messenger.ApplicationLoader
 import java.io.File

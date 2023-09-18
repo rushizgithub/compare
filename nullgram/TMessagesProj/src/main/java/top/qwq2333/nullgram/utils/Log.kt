@@ -17,13 +17,13 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.utils
+package xyz.nextalone.nnngram.utils
 
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 object Log {
-    const val TAG = "Nullgram"
+    const val TAG = "Nnngram"
 
     /**
      * 日志等级 Debug

@@ -16,12 +16,12 @@
  *  If not, see
  * <https://www.gnu.org/licenses/>
  */
-package top.qwq2333.nullgram.utils
+package xyz.nextalone.nnngram.utils
 
 import org.telegram.messenger.BuildVars
-import top.qwq2333.nullgram.BooleanConfig
-import top.qwq2333.nullgram.IntConfig
-import top.qwq2333.nullgram.StringConfig
+import xyz.nextalone.nnngram.BooleanConfig
+import xyz.nextalone.nnngram.IntConfig
+import xyz.nextalone.nnngram.StringConfig
 
 /**
  * ConfigManager用到的Key都塞这 统一管理比较方便些
@@ -126,7 +126,11 @@ object Defines {
     @BooleanConfig const val showSaveMessages = "showSaveMessages"
     @BooleanConfig(true) const val showViewHistory = "showViewHistory"
     @BooleanConfig(true) const val showRepeat = "showRepeat"
+    @BooleanConfig const val showRepeatAsCopy = "showRepeatAsCopy"
+    @BooleanConfig const val showReverse = "showReverse"
     @BooleanConfig const val showCopyPhoto = "showCopyPhoto"
+    @BooleanConfig(true) const val showReactions = "showReactions"
+    @BooleanConfig const val showReport = "showReport"
 
     // custom double tap
     @IntConfig(doubleTabReaction)
@@ -136,8 +140,10 @@ object Defines {
     const val doubleTabReply = 2
     const val doubleTabSaveMessages = 3
     const val doubleTabRepeat = 4
-    const val doubleTabEdit = 5
-    const val doubleTabTranslate = 6
+    const val doubleTabRepeatAsCopy = 5
+    const val doubleTabEdit = 6
+    const val doubleTabTranslate = 7
+    const val doubleTabReverse = 8
 
     // Auto Update
     const val lastCheckUpdateTime = "lastCheckUpdateTime"
@@ -184,8 +190,46 @@ object Defines {
         1645976613,  // Update Channel
         1714986438,  // CI Channel
         1477185964,  // Discussion Group
-        1068402676 // Kitsune
+        1068402676,  // Kitsune
+        784901712,  // NextAlone
+        457896977   // Queally rw
     )
+
+    @BooleanConfig const val doNotUnarchiveBySwipe = "doNotUnarchiveBySwipe"
+    @BooleanConfig const val hideInputFieldBotButton = "hideInputFieldBotButton"
+    @BooleanConfig const val hideMessageSeenTooltip = "hideMessageSeenTooltip"
+    @BooleanConfig const val disableNotificationBubble = "disableNotificationBubble"
+    @BooleanConfig const val showOnlineStatus = "showOnlineStatus"
+    @BooleanConfig const val disablePhotoSideAction = "disablePhotoSideAction"
+    @BooleanConfig const val mergeMessage = "mergeMessage"
+    @BooleanConfig const val filterZalgo = "filterZalgo"
+    @BooleanConfig const val ignoreFolderUnreadCount = "ignoreFolderUnreadCount"
+    @BooleanConfig const val ignoreChatStrict = "ignoreChatStrict"
+    @StringConfig("Nnngram") const val customTitle = "customTitle"
+    @BooleanConfig const val deleteMessageForBoth = "deleteMessageForBoth"
+    @StringConfig("") const val textStyleSettings = "textStyleSettings"
+    @BooleanConfig const val hideSendAsButton = "hideSendAsButton"
+
+    // Drawer List
+    @BooleanConfig(true) const val showNewGroup = "showNewGroup"
+    @BooleanConfig(true) const val showContacts = "showContacts"
+    @BooleanConfig(true) const val showCalls = "showCalls"
+    @BooleanConfig(true) const val showPeopleNearby = "showPeopleNearby"
+    @BooleanConfig(true) const val showSavedMessages = "showSavedMessages"
+    @BooleanConfig const val showArchivedChats = "showArchivedChats"
+    @BooleanConfig(true) const val showChangeEmojiStatus = "showChangeEmojiStatus"
+    @BooleanConfig(true) const val showProfileMyStories = "showProfileMyStories"
+
+    // Text Style
+    @BooleanConfig(true) const val showTextSpoiler = "showTextSpoiler"
+    @BooleanConfig(true) const val showTextBold = "showTextBold"
+    @BooleanConfig(true) const val showTextItalic = "showTextItalic"
+    @BooleanConfig(true) const val showTextMono = "showTextMono"
+    @BooleanConfig(true) const val showTextStrike = "showTextStrike"
+    @BooleanConfig(true) const val showTextUnderline = "showTextUnderline"
+    @BooleanConfig(true) const val showTextCreateMention = "showTextCreateMention"
+    @BooleanConfig(true) const val showTextCreateLink = "showTextCreateLink"
+    @BooleanConfig(true) const val showTextRegular = "showTextRegular"
 
     /**
      * 数组中元素未找到的下标，值为-1

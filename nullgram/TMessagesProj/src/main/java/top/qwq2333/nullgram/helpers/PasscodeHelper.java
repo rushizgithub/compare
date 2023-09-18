@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.helpers;
+package xyz.nextalone.nnngram.helpers;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -31,8 +31,8 @@ import org.telegram.ui.LaunchActivity;
 
 import java.util.Objects;
 
-import top.qwq2333.nullgram.utils.Log;
-import top.qwq2333.nullgram.utils.Utils;
+import xyz.nextalone.nnngram.utils.Log;
+import xyz.nextalone.nnngram.utils.Utils;
 
 public class PasscodeHelper {
     private static final SharedPreferences preferences =

@@ -16,7 +16,7 @@
  *  If not, see
  * <https://www.gnu.org/licenses/>
  */
-package top.qwq2333.nullgram.helpers
+package xyz.nextalone.nnngram.helpers
 
 import android.R
 import android.content.BroadcastReceiver
@@ -28,7 +28,7 @@ import android.os.PatternMatcher
 import androidx.annotation.RequiresApi
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.ui.ActionBar.Theme
-import top.qwq2333.nullgram.utils.Log
+import xyz.nextalone.nnngram.utils.Log
 
 @RequiresApi(api = Build.VERSION_CODES.S)
 object MonetHelper {

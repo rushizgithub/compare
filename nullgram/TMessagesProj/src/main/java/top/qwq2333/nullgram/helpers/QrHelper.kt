@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.helpers
+package xyz.nextalone.nnngram.helpers
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -59,7 +59,7 @@ import org.telegram.ui.Components.Bulletin
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.LinkSpanDrawable.LinksTextView
-import top.qwq2333.nullgram.utils.Log
+import xyz.nextalone.nnngram.utils.Log
 
 object QrHelper {
     @JvmStatic

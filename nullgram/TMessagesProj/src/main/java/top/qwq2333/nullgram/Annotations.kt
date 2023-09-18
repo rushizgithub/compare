@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram
+package xyz.nextalone.nnngram
 
 /**
  * The field's Int getter and setter with this annotation will be generated in the `Config` class.

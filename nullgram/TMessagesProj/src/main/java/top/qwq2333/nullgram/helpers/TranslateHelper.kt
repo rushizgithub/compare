@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.helpers
+package xyz.nextalone.nnngram.helpers
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
@@ -40,20 +40,20 @@ import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme.ResourcesProvider
 import org.telegram.ui.Components.TranslateAlert
-import top.qwq2333.gen.Config
-import top.qwq2333.nullgram.activity.LanguageSelectActivity
-import top.qwq2333.nullgram.config.ConfigManager
-import top.qwq2333.nullgram.translate.BaseTranslator
-import top.qwq2333.nullgram.translate.providers.BaiduTranslator
-import top.qwq2333.nullgram.translate.providers.DeepLTranslator
-import top.qwq2333.nullgram.translate.providers.GoogleTranslator
-import top.qwq2333.nullgram.translate.providers.LingoTranslator
-import top.qwq2333.nullgram.translate.providers.MicrosoftTranslator
-import top.qwq2333.nullgram.translate.providers.TelegramTranslator
-import top.qwq2333.nullgram.translate.providers.YandexTranslator
-import top.qwq2333.nullgram.ui.PopupBuilder
-import top.qwq2333.nullgram.utils.Defines
-import top.qwq2333.nullgram.utils.Log
+import xyz.nextalone.gen.Config
+import xyz.nextalone.nnngram.activity.LanguageSelectActivity
+import xyz.nextalone.nnngram.config.ConfigManager
+import xyz.nextalone.nnngram.translate.BaseTranslator
+import xyz.nextalone.nnngram.translate.providers.BaiduTranslator
+import xyz.nextalone.nnngram.translate.providers.DeepLTranslator
+import xyz.nextalone.nnngram.translate.providers.GoogleTranslator
+import xyz.nextalone.nnngram.translate.providers.LingoTranslator
+import xyz.nextalone.nnngram.translate.providers.MicrosoftTranslator
+import xyz.nextalone.nnngram.translate.providers.TelegramTranslator
+import xyz.nextalone.nnngram.translate.providers.YandexTranslator
+import xyz.nextalone.nnngram.ui.PopupBuilder
+import xyz.nextalone.nnngram.utils.Defines
+import xyz.nextalone.nnngram.utils.Log
 import java.util.Locale
 
 object TranslateHelper {

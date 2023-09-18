@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.config;
+package xyz.nextalone.nnngram.config;
 
 import org.telegram.messenger.MessageObject;
 

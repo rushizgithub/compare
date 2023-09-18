@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.helpers;
+package xyz.nextalone.nnngram.helpers;
 
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -33,8 +33,7 @@ import org.telegram.ui.Components.URLSpanReplacement;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import top.qwq2333.gen.Config;
-
+import xyz.nextalone.gen.Config;
 
 public class EntitiesHelper {
     private static final Pattern[] PATTERNS = new Pattern[]{

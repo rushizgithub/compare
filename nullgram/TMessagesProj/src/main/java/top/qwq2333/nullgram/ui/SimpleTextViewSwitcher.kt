@@ -16,7 +16,7 @@
  *  If not, see
  * <https://www.gnu.org/licenses/>
  */
-package top.qwq2333.nullgram.ui
+package xyz.nextalone.nnngram.ui
 
 import android.content.Context
 import android.graphics.Paint

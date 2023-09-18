@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.translate.providers
+package xyz.nextalone.nnngram.translate.providers
 
 import io.ktor.client.call.body
 import io.ktor.client.request.header
@@ -29,8 +29,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import top.qwq2333.nullgram.translate.BaseTranslator
-import top.qwq2333.nullgram.utils.Log
+import xyz.nextalone.nnngram.translate.BaseTranslator
+import xyz.nextalone.nnngram.utils.Log
 
 object LingoTranslator : BaseTranslator() {
 

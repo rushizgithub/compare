@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.helpers;
+package xyz.nextalone.nnngram.helpers;
 
 import android.net.Uri;
 import android.text.TextUtils;
@@ -25,12 +25,12 @@ import android.text.TextUtils;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.BaseFragment;
 
-import top.qwq2333.nullgram.activity.BaseActivity;
-import top.qwq2333.nullgram.activity.ChatSettingActivity;
-import top.qwq2333.nullgram.activity.ExperimentSettingActivity;
-import top.qwq2333.nullgram.activity.GeneralSettingActivity;
-import top.qwq2333.nullgram.activity.MainSettingActivity;
-import top.qwq2333.nullgram.activity.PasscodeSettingActivity;
+import xyz.nextalone.nnngram.activity.BaseActivity;
+import xyz.nextalone.nnngram.activity.ChatSettingActivity;
+import xyz.nextalone.nnngram.activity.ExperimentSettingActivity;
+import xyz.nextalone.nnngram.activity.GeneralSettingActivity;
+import xyz.nextalone.nnngram.activity.MainSettingActivity;
+import xyz.nextalone.nnngram.activity.PasscodeSettingActivity;
 
 public class SettingsHelper {
 
@@ -40,7 +40,7 @@ public class SettingsHelper {
             return;
         }
         var segments = uri.getPathSegments();
-        if (segments.isEmpty() || segments.size() > 2 || !"nullsetting".equals(segments.get(0))) {
+        if (segments.isEmpty() || segments.size() > 2 || !"nasettings".equals(segments.get(0))) {
             unknown.run();
             return;
         }

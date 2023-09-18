@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.translate.providers
+package xyz.nextalone.nnngram.translate.providers
 
 import android.text.TextUtils
 import io.ktor.client.request.post
@@ -28,8 +28,8 @@ import io.ktor.http.contentType
 import io.ktor.http.userAgent
 import org.json.JSONObject
 import org.telegram.messenger.Utilities
-import top.qwq2333.nullgram.translate.BaseTranslator
-import top.qwq2333.nullgram.utils.encodeUrl
+import xyz.nextalone.nnngram.translate.BaseTranslator
+import xyz.nextalone.nnngram.utils.encodeUrl
 import java.util.Locale
 import java.util.UUID
 

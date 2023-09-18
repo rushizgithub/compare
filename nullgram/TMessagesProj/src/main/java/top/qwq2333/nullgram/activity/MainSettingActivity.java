@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.activity;
+package xyz.nextalone.nnngram.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -54,14 +54,14 @@ import org.telegram.ui.LaunchActivity;
 import java.io.File;
 import java.util.ArrayList;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.helpers.PasscodeHelper;
-import top.qwq2333.nullgram.utils.AlertUtil;
-import top.qwq2333.nullgram.utils.FileUtils;
-import top.qwq2333.nullgram.utils.Log;
-import top.qwq2333.nullgram.utils.PermissionUtils;
-import top.qwq2333.nullgram.utils.ShareUtil;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.helpers.PasscodeHelper;
+import xyz.nextalone.nnngram.utils.AlertUtil;
+import xyz.nextalone.nnngram.utils.FileUtils;
+import xyz.nextalone.nnngram.utils.Log;
+import xyz.nextalone.nnngram.utils.PermissionUtils;
+import xyz.nextalone.nnngram.utils.ShareUtil;
 
 @SuppressLint("NotifyDataSetChanged")
 public class MainSettingActivity extends BaseActivity {
@@ -96,7 +96,7 @@ public class MainSettingActivity extends BaseActivity {
 
     @Override
     protected String getActionBarTitle() {
-        return LocaleController.getString("NullSettings", R.string.NullSettings);
+        return LocaleController.getString("NnnSettings", R.string.NullSettings);
     }
 
     @Override
@@ -111,9 +111,9 @@ public class MainSettingActivity extends BaseActivity {
         } else if (position == channelRow) {
             MessagesController.getInstance(currentAccount).openByUserName(LocaleController.getString("OfficialChannelName", R.string.OfficialChannelName), this, 1);
         } else if (position == websiteRow) {
-            Browser.openUrl(getParentActivity(), "https://qwq2333.top");
+            Browser.openUrl(getParentActivity(), "https://nextalone.xyz");
         } else if (position == sourceCodeRow) {
-            Browser.openUrl(getParentActivity(), "https://github.com/qwq233/Nullgram");
+            Browser.openUrl(getParentActivity(), "https://github.com/PreviousAlone/nnngram");
         } else if (position == licenseRow) {
             presentFragment(new LicenseActivity());
         } else if (position == updateRow) {
@@ -277,7 +277,7 @@ public class MainSettingActivity extends BaseActivity {
                     if (position == channelRow) {
                         textCell.setTextAndValue(LocaleController.getString("OfficialChannel", R.string.OfficialChannel), "@" + LocaleController.getString("OfficialChannelName", R.string.OfficialChannelName), true);
                     } else if (position == websiteRow) {
-                        textCell.setTextAndValue(LocaleController.getString("OfficialSite", R.string.OfficialSite), "qwq2333.top", true);
+                        textCell.setTextAndValue(LocaleController.getString("OfficialSite", R.string.OfficialSite), "nextalone.xyz", true);
                     } else if (position == sourceCodeRow) {
                         textCell.setTextAndValue(LocaleController.getString("ViewSourceCode", R.string.ViewSourceCode), "GitHub", true);
                     } else if (position == licenseRow) {
@@ -324,7 +324,7 @@ public class MainSettingActivity extends BaseActivity {
     private void backupSettings() {
 
         try {
-            File cacheFile = new File(ApplicationLoader.applicationContext.getCacheDir(), DateFormat.format("yyyyMMdd", System.currentTimeMillis()) + "-nullgram-settings.json");
+            File cacheFile = new File(ApplicationLoader.applicationContext.getCacheDir(), DateFormat.format("yyyyMMdd", System.currentTimeMillis()) + "-nnngram-settings.json");
             FileUtils.writeUtf8String(ConfigManager.exportConfigurationToJson(), cacheFile);
             ShareUtil.shareFile(getParentActivity(), cacheFile);
         } catch (JSONException e) {

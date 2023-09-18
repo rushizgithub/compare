@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.translate
+package xyz.nextalone.nnngram.translate
 
 import android.text.TextUtils
 import android.util.Pair
@@ -35,8 +35,8 @@ import kotlinx.serialization.json.Json
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.tgnet.TLRPC
-import top.qwq2333.nullgram.helpers.TranslateHelper
-import top.qwq2333.nullgram.utils.Log
+import xyz.nextalone.nnngram.helpers.TranslateHelper
+import xyz.nextalone.nnngram.utils.Log
 
 abstract class BaseTranslator {
     /**

@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.activity;
+package xyz.nextalone.nnngram.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -66,10 +66,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import kotlin.Unit;
-import top.qwq2333.nullgram.ui.TextViewEffects;
-import top.qwq2333.nullgram.utils.MessageUtils;
-import top.qwq2333.nullgram.utils.Utils;
+import xyz.nextalone.nnngram.ui.TextViewEffects;
+import xyz.nextalone.nnngram.utils.MessageUtils;
+import xyz.nextalone.nnngram.utils.Utils;
 
 @SuppressLint({"RtlHardcoded", "NotifyDataSetChanged"})
 public class MessageDetailActivity extends BaseActivity implements NotificationCenter.NotificationCenterDelegate {
@@ -332,7 +331,6 @@ public class MessageDetailActivity extends BaseActivity implements NotificationC
                             builder1.append(emojiSetOwner);
                         }
                         cell.setTextAndValueWithEmoji("", builder1, false);
-                        return Unit.INSTANCE;
                     });
                     builder.append("Loading...");
                     builder.append("\n");
@@ -522,7 +520,6 @@ public class MessageDetailActivity extends BaseActivity implements NotificationC
                                     builder1.append(stickerSetOwner);
                                 }
                                 textCell.setTextAndValueWithEmoji("Sticker Pack creator", builder1, divider);
-                                return Unit.INSTANCE;
                             });
                             builder.append("Loading...");
                             builder.append("\n");

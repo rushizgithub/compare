@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.activity;
+package xyz.nextalone.nnngram.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -41,11 +41,11 @@ import org.telegram.ui.Components.AlertsCreator;
 
 import java.util.ArrayList;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.ui.PopupBuilder;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.Log;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.ui.PopupBuilder;
+import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.Log;
 
 @SuppressLint("NotifyDataSetChanged")
 public class ExperimentSettingActivity extends BaseActivity {
@@ -79,6 +79,7 @@ public class ExperimentSettingActivity extends BaseActivity {
     private int hidePremiumStickerAnimRow;
     private int fastSpeedUploadRow;
     private int modifyDownloadSpeedRow;
+    private int ignoreChatStrictRow;
     private int premium2Row;
     private int alwaysSendWithoutSoundRow;
 
@@ -220,6 +221,11 @@ public class ExperimentSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.storyStealthMode);
             }
+        } else if (position == ignoreChatStrictRow) {
+            Config.toggleIgnoreChatStrict();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.ignoreChatStrict);
+            }
         }
 
     }
@@ -278,6 +284,7 @@ public class ExperimentSettingActivity extends BaseActivity {
             fastSpeedUploadRow = addRow("fastSpeedUpload");
             modifyDownloadSpeedRow = addRow("modifyDownloadSpeed");
             premium2Row = addRow();
+            ignoreChatStrictRow = addRow("ignoreChatStrict");
         }
 
         if (listAdapter != null) {
@@ -395,6 +402,8 @@ public class ExperimentSettingActivity extends BaseActivity {
                             true);
                     } else if (position == enablePanguOnReceivingRow) {
                         textCell.setTextAndCheck(LocaleController.getString("enablePanguOnReceiving", R.string.enablePanguOnReceiving), Config.enablePanguOnReceiving, true);
+                    } else if (position == ignoreChatStrictRow) {
+                        textCell.setTextAndCheck("", Config.ignoreChatStrict, true);
                     }
                     break;
                 }

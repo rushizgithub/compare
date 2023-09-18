@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.activity;
+package xyz.nextalone.nnngram.activity;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -59,7 +59,7 @@ import org.telegram.ui.Components.URLSpanNoUnderline;
 
 import java.util.Locale;
 
-import top.qwq2333.nullgram.utils.MessageUtils;
+import xyz.nextalone.nnngram.utils.MessageUtils;
 
 public class DatacenterActivity extends BaseActivity implements NotificationCenter.NotificationCenterDelegate {
     private final int dcToHighlight;

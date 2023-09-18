@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.ui
+package xyz.nextalone.nnngram.ui
 
 import android.content.Context
 import android.graphics.PorterDuff
@@ -33,7 +33,7 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.ExtendedGridLayoutManager
 import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.RecyclerListView.SelectionAdapter
-import top.qwq2333.nullgram.helpers.FolderIconHelper
+import xyz.nextalone.nnngram.helpers.FolderIconHelper
 
 object IconSelector {
     @JvmStatic

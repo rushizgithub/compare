@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.utils
+package xyz.nextalone.nnngram.utils
 
 import android.content.Context
 import android.content.Intent
@@ -34,16 +34,21 @@ object ShareUtil {
     @JvmStatic
     @JvmOverloads
     fun shareText(ctx: Context, text: String, choose: Boolean = false) {
+
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, text)
         }
 
         if (!choose) {
+
             intent.setClass(ctx, LaunchActivity::class.java)
             ctx.startActivity(intent)
+
         } else {
+
             ctx.startActivity(Intent.createChooser(intent, text))
+
         }
 
     }
@@ -51,6 +56,7 @@ object ShareUtil {
     @JvmOverloads
     @JvmStatic
     fun shareFile(ctx: Context, fileToShare: File, caption: String = "") {
+
         val uri = if (Build.VERSION.SDK_INT >= 24) {
             FileProvider.getUriForFile(ctx, BuildConfig.APPLICATION_ID + ".provider", fileToShare)
         } else {
@@ -58,12 +64,18 @@ object ShareUtil {
         }
 
         val i = Intent(Intent.ACTION_SEND)
+
         if (Build.VERSION.SDK_INT >= 24) {
+
             i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
         }
+
         i.type = "message/rfc822"
         i.putExtra(Intent.EXTRA_EMAIL, "")
+
         if (caption.isNotBlank()) i.putExtra(Intent.EXTRA_SUBJECT, caption)
+
         i.putExtra(Intent.EXTRA_STREAM, uri)
         i.setClass(ctx, LaunchActivity::class.java)
 
@@ -75,20 +87,33 @@ object ShareUtil {
     fun openFile(ctx: Context, fileToOpen: File) {
 
         val uri = if (Build.VERSION.SDK_INT >= 24) {
+
             FileProvider.getUriForFile(ctx, BuildConfig.APPLICATION_ID + ".provider", fileToOpen)
+
         } else {
+
             Uri.fromFile(fileToOpen)
+
         }
 
         val intent = Intent(Intent.ACTION_VIEW)
+
         if (Build.VERSION.SDK_INT >= 24) {
+
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
         }
+
         if (fileToOpen.extension.isBlank()) {
+
             intent.type = "application/octet-stream"
+
         } else {
+
             intent.type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileToOpen.extension)
+
         }
+
         intent.data = uri
 
         ctx.startActivity(intent)

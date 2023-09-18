@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.remote
+package xyz.nextalone.nnngram.remote
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp

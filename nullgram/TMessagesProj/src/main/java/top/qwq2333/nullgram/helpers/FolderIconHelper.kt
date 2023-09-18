@@ -17,15 +17,15 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.helpers
+package xyz.nextalone.nnngram.helpers
 
 import androidx.core.util.Pair
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
-import top.qwq2333.nullgram.config.ConfigManager
-import top.qwq2333.nullgram.utils.Defines
+import xyz.nextalone.nnngram.config.ConfigManager
+import xyz.nextalone.nnngram.utils.Defines
 
 object FolderIconHelper {
     val folderIcons = linkedMapOf<String, Int>()

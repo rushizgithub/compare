@@ -17,14 +17,14 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.config;
+package xyz.nextalone.nnngram.config;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import org.telegram.messenger.ApplicationLoader;
 
-import top.qwq2333.nullgram.helpers.TranslateHelper;
+import xyz.nextalone.nnngram.helpers.TranslateHelper;
 
 public class DialogConfig {
     private static final SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("dialogconfig", Context.MODE_PRIVATE);

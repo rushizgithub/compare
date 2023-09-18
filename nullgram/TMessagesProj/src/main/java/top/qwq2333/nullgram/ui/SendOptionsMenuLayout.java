@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.ui;
+package xyz.nextalone.nnngram.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -42,7 +42,7 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.LayoutHelper;
 
-import top.qwq2333.nullgram.config.ForwardContext;
+import xyz.nextalone.nnngram.config.ForwardContext;
 
 @SuppressLint({"ClickableViewAccessibility", "ViewConstructor"})
 public class SendOptionsMenuLayout extends LinearLayout {

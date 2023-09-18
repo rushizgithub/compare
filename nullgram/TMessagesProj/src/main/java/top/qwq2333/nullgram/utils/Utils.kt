@@ -17,7 +17,7 @@
  * <https://www.gnu.org/licenses/>
  */
 
-package top.qwq2333.nullgram.utils
+package xyz.nextalone.nnngram.utils
 
 import android.content.Context
 import android.graphics.Canvas
@@ -42,9 +42,10 @@ import org.telegram.ui.ActionBar.ActionBarPopupWindow.ActionBarPopupWindowLayout
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.Components.AlertsCreator
 import org.telegram.ui.Components.BulletinFactory
-import top.qwq2333.gen.Config
-import top.qwq2333.nullgram.activity.DatacenterActivity
-import top.qwq2333.nullgram.remote.NicegramController
+import xyz.nextalone.gen.Config
+import xyz.nextalone.nnngram.activity.DatacenterActivity
+import xyz.nextalone.nnngram.remote.NicegramController
+import xyz.nextalone.nnngram.utils.Defines
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -56,14 +57,18 @@ import java.util.Locale
 
 
 object Utils {
-
     @JvmStatic
-    fun showForwardDate(obj: MessageObject, orig: CharSequence): String = if (Config.dateOfForwardedMsg &&
-        obj.messageOwner.fwd_from.date.toLong() != 0L
-    ) {
-        "$orig • ${LocaleController.formatDate(obj.messageOwner.fwd_from.date.toLong())}"
-    } else {
-        orig.toString()
+    fun showForwardDate(obj: MessageObject, orig: CharSequence): String {
+        val date: Long = obj.messageOwner.fwd_from.date.toLong()
+        val day: String = LocaleController.formatDate(date)
+        val time: String = LocaleController.getInstance().formatterDay.format(date * 1000)
+        return if (!Config.dateOfForwardedMsg || date == 0L) {
+            orig.toString()
+        } else {
+            if (day == time) {
+                "$orig · $day"
+            } else "$orig · $day $time"
+        }
     }
 
     @JvmStatic
@@ -304,10 +309,4 @@ fun String.isNumber(): Boolean = try {
     true
 } catch (e: NumberFormatException) {
     false
-}
-
-internal inline fun tryOrLog(block: () -> Unit) = runCatching {
-    block()
-}.onFailure {
-    Log.e(it)
 }
