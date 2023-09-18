@@ -90,7 +90,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
-import xyz.nextalone.gen.Config;
+import top.qwq2333.gen.Config;
 
 public class MessagesController extends BaseController implements NotificationCenter.NotificationCenterDelegate {
 
@@ -17627,7 +17627,7 @@ public class MessagesController extends BaseController implements NotificationCe
         }
         for (int a = 0, N = reasons.size(); a < N; a++) {
             TLRPC.TL_restrictionReason reason = reasons.get(a);
-            if ("all".equals(reason.platform)) {
+            if ("all".equals(reason.platform) || ("android".equals(reason.platform) && BuildConfig.isPlay)) {
                 return reason.text;
             }
         }

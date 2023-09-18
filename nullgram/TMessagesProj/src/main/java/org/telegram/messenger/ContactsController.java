@@ -46,8 +46,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import xyz.nextalone.nnngram.utils.StringUtils;
-
 public class ContactsController extends BaseController {
 
     private Account systemAccount;
@@ -2928,7 +2926,7 @@ public class ContactsController extends BaseController {
                 result.append(firstName);
             }
         }
-        return StringUtils.zalgoFilter(result.toString());
+        return result.toString();
     }
 
     private class PhoneBookContact {

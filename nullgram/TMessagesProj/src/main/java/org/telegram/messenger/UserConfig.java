@@ -25,8 +25,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import xyz.nextalone.nnngram.helpers.PasscodeHelper;
-import xyz.nextalone.nnngram.utils.AnalyticsUtils;
+import top.qwq2333.nullgram.helpers.PasscodeHelper;
+import top.qwq2333.nullgram.utils.AnalyticsUtils;
 
 public class UserConfig extends BaseController {
 

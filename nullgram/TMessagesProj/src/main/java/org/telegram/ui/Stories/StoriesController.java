@@ -69,7 +69,7 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import xyz.nextalone.gen.Config;
+import top.qwq2333.gen.Config;
 
 public class StoriesController {
 
@@ -226,9 +226,6 @@ public class StoriesController {
     public boolean hasStories(long dialogId) {
         if (getSelfUserId() == dialogId && hasUploadingStories()) {
             return true;
-        }
-        if (Config.hideStories) {
-            return false;
         }
         TLRPC.TL_userStories stories = allStoriesMap.get(dialogId);
         return stories != null && !stories.stories.isEmpty();

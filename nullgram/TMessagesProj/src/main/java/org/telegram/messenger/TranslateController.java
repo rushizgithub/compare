@@ -29,7 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import kotlin.Unit;
-import xyz.nextalone.nnngram.helpers.TranslateHelper;
+import top.qwq2333.nullgram.helpers.TranslateHelper;
 
 public class TranslateController extends BaseController {
 

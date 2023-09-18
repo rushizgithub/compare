@@ -31,7 +31,7 @@ import org.telegram.ui.Stories.recorder.StoryPrivacyBottomSheet;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import xyz.nextalone.nnngram.utils.Defines;
+import top.qwq2333.nullgram.utils.Defines;
 
 @SuppressWarnings("unchecked")
 public class TLRPC {
