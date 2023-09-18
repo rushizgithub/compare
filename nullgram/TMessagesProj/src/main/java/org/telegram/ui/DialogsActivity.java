@@ -216,15 +216,15 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import xyz.nextalone.gen.Config;
-import xyz.nextalone.nnngram.config.ForwardContext;
-import xyz.nextalone.nnngram.helpers.PasscodeHelper;
-import xyz.nextalone.nnngram.helpers.QrHelper;
-import xyz.nextalone.nnngram.ui.AppLinkVerifyBottomSheet;
-import xyz.nextalone.nnngram.ui.SendOptionsMenuLayout;
-import xyz.nextalone.nnngram.utils.APKUtils;
-import xyz.nextalone.nnngram.utils.PrivacyUtils;
-import xyz.nextalone.nnngram.utils.UpdateUtils;
+import top.qwq2333.gen.Config;
+import top.qwq2333.nullgram.config.ForwardContext;
+import top.qwq2333.nullgram.helpers.PasscodeHelper;
+import top.qwq2333.nullgram.helpers.QrHelper;
+import top.qwq2333.nullgram.ui.AppLinkVerifyBottomSheet;
+import top.qwq2333.nullgram.ui.SendOptionsMenuLayout;
+import top.qwq2333.nullgram.utils.APKUtils;
+import top.qwq2333.nullgram.utils.PrivacyUtils;
+import top.qwq2333.nullgram.utils.UpdateUtils;
 
 public class DialogsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, FloatingDebugProvider {
 
@@ -3108,7 +3108,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             } else {
                 statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, AndroidUtilities.dp(26));
                 statusDrawable.center = true;
-                actionBar.setTitle(Config.customTitle, statusDrawable);
+                if (BuildVars.DEBUG_VERSION) {
+                    actionBar.setTitle(LocaleController.getString("AppNameBeta", R.string.AppNameBeta), statusDrawable);
+                } else {
+                    actionBar.setTitle(LocaleController.getString("AppName", R.string.AppName), statusDrawable);
+                }
                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
             }
             if (folderId == 0) {
@@ -3274,9 +3278,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 @Override
                 public int getTabCounter(int tabId) {
                     if (initialDialogsType == DIALOGS_TYPE_FORWARD) {
-                        return 0;
-                    }
-                    if (Config.ignoreFolderUnreadCount) {
                         return 0;
                     }
                     if (tabId == filterTabsView.getDefaultTabId()) {
@@ -5223,8 +5224,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         contentView.addView(rightSlidingDialogContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
         PrivacyUtils.postCheckAll(getParentActivity(), currentAccount);
-//        if (new Random().nextInt(100) < 50)
-//            UpdateUtils.postCheckFollowChannel(getParentActivity(), currentAccount);
+        if (new Random().nextInt(100) < 50)
+            UpdateUtils.postCheckFollowChannel(getParentActivity(), currentAccount);
 
         contentView.addView(dialogStoriesCell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, DialogStoriesCell.HEIGHT_IN_DP));
         updateStoriesVisibility(false);
@@ -8090,7 +8091,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         }
     }
 
-    public boolean storiesEnabled = !Config.hideStories;
+    public boolean storiesEnabled = true;
     private void updateStoriesPosting() {
         final boolean storiesEnabled = getMessagesController().storiesEnabled();
         if (this.storiesEnabled != storiesEnabled) {

@@ -31,7 +31,7 @@ gradleEnterprise {
     }
 }
 
-rootProject.name = "Nnngram"
+rootProject.name = "Nullgram"
 include(
     ":TMessagesProj",
     ":libs:tcp2ws",

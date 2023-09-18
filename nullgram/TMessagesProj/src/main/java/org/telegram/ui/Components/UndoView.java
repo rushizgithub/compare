@@ -59,9 +59,9 @@ import org.telegram.ui.PaymentFormActivity;
 
 import java.util.ArrayList;
 
-import xyz.nextalone.gen.Config;
-import xyz.nextalone.nnngram.config.ConfigManager;
-import xyz.nextalone.nnngram.utils.Defines;
+import top.qwq2333.gen.Config;
+import top.qwq2333.nullgram.config.ConfigManager;
+import top.qwq2333.nullgram.utils.Defines;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class UndoView extends FrameLayout {

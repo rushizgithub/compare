@@ -245,20 +245,20 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import kotlin.Unit;
-import xyz.nextalone.nnngram.activity.MainSettingActivity;
-import xyz.nextalone.gen.Config;
-import xyz.nextalone.nnngram.config.ConfigManager;
-import xyz.nextalone.nnngram.helpers.TranslateHelper;
-import xyz.nextalone.nnngram.translate.LanguageDetectorTimeout;
-import xyz.nextalone.nnngram.ui.AutoTranslatePopupWrapper;
-import xyz.nextalone.nnngram.ui.BottomBuilder;
-import xyz.nextalone.nnngram.ui.SimpleTextViewSwitcher;
-import xyz.nextalone.nnngram.utils.AlertUtil;
-import xyz.nextalone.nnngram.utils.Defines;
-import xyz.nextalone.nnngram.utils.Log;
-import xyz.nextalone.nnngram.utils.StringUtils;
-import xyz.nextalone.nnngram.utils.Utils;
-import xyz.nextalone.nnngram.utils.UtilsKt;
+import top.qwq2333.nullgram.activity.MainSettingActivity;
+import top.qwq2333.gen.Config;
+import top.qwq2333.nullgram.config.ConfigManager;
+import top.qwq2333.nullgram.helpers.TranslateHelper;
+import top.qwq2333.nullgram.translate.LanguageDetectorTimeout;
+import top.qwq2333.nullgram.ui.AutoTranslatePopupWrapper;
+import top.qwq2333.nullgram.ui.BottomBuilder;
+import top.qwq2333.nullgram.ui.SimpleTextViewSwitcher;
+import top.qwq2333.nullgram.utils.AlertUtil;
+import top.qwq2333.nullgram.utils.Defines;
+import top.qwq2333.nullgram.utils.Log;
+import top.qwq2333.nullgram.utils.StringUtils;
+import top.qwq2333.nullgram.utils.Utils;
+import top.qwq2333.nullgram.utils.UtilsKt;
 
 public class ProfileActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, SharedMediaLayout.SharedMediaPreloaderDelegate, ImageUpdater.ImageUpdaterDelegate, SharedMediaLayout.Delegate {
     private final static int PHONE_OPTION_CALL = 0,
@@ -2035,7 +2035,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity(), resourcesProvider);
                             builder.setTitle(LocaleController.getString("AddBot", R.string.AddBot));
-                            String chatName = chat == null ? "" : StringUtils.zalgoFilter(chat.title);
+                            String chatName = chat == null ? "" : chat.title;
                             builder.setMessage(AndroidUtilities.replaceTags(LocaleController.formatString("AddMembersAlertNamesText", R.string.AddMembersAlertNamesText, UserObject.getUserName(user), chatName)));
                             builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
                             builder.setPositiveButton(LocaleController.getString("AddBot", R.string.AddBot), (di, i) -> {
@@ -3566,7 +3566,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             } else if (which == 8) {
                                 SharedConfig.toggleRoundCamera16to9();
                             } else if (which == 9) {
-//                                ((LaunchActivity) getParentActivity()).checkAppUpdate(true);
+                                ((LaunchActivity) getParentActivity()).checkAppUpdate(true);
                             } else if (which == 10) {
                                 getMessagesStorage().readAllDialogs(-1);
                             } else if (which == 11) {
@@ -8246,7 +8246,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         title = Emoji.replaceEmoji(title, nameTextView[a].getPaint().getFontMetricsInt(), AndroidUtilities.dp(24), false);
                     } catch (Exception ignore) {
                     }
-                    if (nameTextView[a].setText(StringUtils.zalgoFilter(title))) {
+                    if (nameTextView[a].setText(title)) {
                         changed = true;
                     }
                 } else if (chat.title != null) {
@@ -8255,7 +8255,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         title = Emoji.replaceEmoji(title, nameTextView[a].getPaint().getFontMetricsInt(), AndroidUtilities.dp(24), false);
                     } catch (Exception ignore) {
                     }
-                    if (nameTextView[a].setText(StringUtils.zalgoFilter(title))) {
+                    if (nameTextView[a].setText(title)) {
                         changed = true;
                     }
                 }
@@ -9445,8 +9445,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         PackageInfo pInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
                         int code = pInfo.versionCode;
                         String abi = BuildConfig.FLAVOR;
-                        cell.setText(LocaleController.formatString("NnngramVersion", R.string.NullgramVersion, String.format(Locale.US, "%s (%d) %s", pInfo.versionName, code, abi),
-                            String.format(Locale.US, "%s (%d)", BuildVars.BUILD_VERSION_STRING, BuildVars.BUILD_VERSION)));
+                        cell.setText(LocaleController.formatString("NullgramVersion", R.string.NullgramVersion, String.format(Locale.US, "%s (%d) %s", pInfo.versionName, code, abi), String.format(Locale.US, "%s (%d)", BuildVars.BUILD_VERSION_STRING, BuildVars.BUILD_VERSION)));
                     } catch (Exception e) {
                         FileLog.e(e);
                     }
@@ -9641,16 +9640,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     } else if (position == numberRow) {
                         TLRPC.User user = UserConfig.getInstance(currentAccount).getCurrentUser();
                         String value;
-                        if (!Config.hidePhone) {
-                            if (user != null && user.phone != null && !user.phone.isEmpty()) {
-                                value = PhoneFormat.getInstance().format("+" + user.phone);
-                            } else {
-                                value = LocaleController.getString("NumberUnknown", R.string.NumberUnknown);
-                            }
-                        } else if (!TextUtils.isEmpty(user.username)) {
-                            value = "@" + user.username;
+                        if (user != null && user.phone != null && user.phone.length() != 0) {
+                            value = PhoneFormat.getInstance().format("+" + user.phone);
                         } else {
-                            value = "@???";
+                            value = LocaleController.getString("NumberUnknown", R.string.NumberUnknown);
                         }
                         detailCell.setTextAndValue(value, LocaleController.getString("TapToChangePhone", R.string.TapToChangePhone), true);
                         detailCell.setContentDescriptionValueFirst(false);
@@ -9703,18 +9696,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     if (position == userInfoRow) {
                         TLRPC.User user = userInfo.user != null ? userInfo.user : getMessagesController().getUser(userInfo.id);
                         boolean addlinks = isBot || (user != null && user.premium && userInfo.about != null);
-                        aboutLinkCell.setTextAndValue(StringUtils.zalgoFilter(userInfo.about), LocaleController.getString("UserBio", R.string.UserBio), addlinks);
+                        aboutLinkCell.setTextAndValue(userInfo.about, LocaleController.getString("UserBio", R.string.UserBio), addlinks);
                     } else if (position == channelInfoRow) {
                         String text = chatInfo.about;
                         while (text.contains("\n\n\n")) {
                             text = text.replace("\n\n\n", "\n\n");
                         }
-                        aboutLinkCell.setText(StringUtils.zalgoFilter(text), true);
+                        aboutLinkCell.setText(text, true);
                     } else if (position == bioRow) {
                         String value;
                         if (userInfo == null || !TextUtils.isEmpty(userInfo.about)) {
                             value = userInfo == null ? LocaleController.getString("Loading", R.string.Loading) : userInfo.about;
-                            aboutLinkCell.setTextAndValue(StringUtils.zalgoFilter(value), LocaleController.getString("UserBio", R.string.UserBio), getUserConfig().isPremium());
+                            aboutLinkCell.setTextAndValue(value, LocaleController.getString("UserBio", R.string.UserBio), getUserConfig().isPremium());
                             currentBio = userInfo != null ? userInfo.about : null;
                         } else {
                             aboutLinkCell.setTextAndValue(LocaleController.getString("UserBio", R.string.UserBio), LocaleController.getString("UserBioDetail", R.string.UserBioDetail), false);
@@ -9804,7 +9797,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         textCell.setText(LocaleController.getString("ReportUserLocation", R.string.ReportUserLocation), false);
                         textCell.setColors(-1, Theme.key_text_RedRegular);
                     } else if (position == nullRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("NnnSettings", R.string.NullgramName), R.drawable.msg_settings, false);
+                        textCell.setTextAndIcon(LocaleController.getString("NullSettings", R.string.NullSettings), R.drawable.msg_settings, false);
                     } else if (position == languageRow) {
                         textCell.setTextAndValueAndIcon(LocaleController.getString("Language", R.string.Language), LocaleController.getCurrentLanguageName(), false, R.drawable.msg2_language, false);
                         textCell.setImageLeft(23);
